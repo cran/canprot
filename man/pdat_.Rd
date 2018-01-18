@@ -20,10 +20,11 @@
 }
 
 \details{
-The \code{pdat_} functions read CSV data files for data on relatively up- and down-expressed proteins reported in proteomic experiments, then uses \code{\link{protcomp}} to calculate chemical compositional metrics.
+The \code{pdat_} functions calculate chemical compositional metrics (using \code{\link{protcomp}}) for relatively up- and down-expressed proteins reported in proteomic experiments.
 
-The data files available in the package are stored in the \code{extdata} directory, with subdirectories corresponding to the names of the functions.
 Use \code{pdat_CRC} to retrieve data for protein expression in colorectal cancer, \code{pdat_pancreactic} for data on pancreatic cancer, \code{pdat_hypoxia} for data on hypoxia or 3D culture, and \code{pdat_osmotic} for data on hyperosmotic stress.
+The functions get relative expression data from the CSV files stored in \code{extdata/expression/}, with subdirectories corresponding to the names of the functions.
+Some of the functions also retrieve amino acid compositions from the files in \code{extdata/aa/} (for non-human proteins).
 
 If \code{dataset} is \code{NULL}, the return value gives the names of all datasets that can be retrieved using the function.
 Provide one of these names as the \code{dataset} argument to retrieve the data.
@@ -56,7 +57,7 @@ for(what in c("CRC", "pancreatic", "hypoxia", "osmotic")) {
   datasets <- get(pdat_fun)()
   comptab <- lapply_canprot(datasets, function(dataset) {
     pdat <- get_pdat(dataset, pdat_fun)
-    ZC_nH2O(pdat, plot.it = FALSE)
+    get_comptab(pdat)
   }, varlist = "pdat_fun")
   # write summary table
   comptab <- do.call(rbind, comptab)

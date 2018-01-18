@@ -11,7 +11,7 @@ datasets <- pdat_CRC()
 ## ----comptab, message=FALSE-------------------------------------------------------------
 comptab <- lapply_canprot(datasets, function(dataset) {
   pdat <- get_pdat(dataset)
-  ZC_nH2O(pdat, plot.it=FALSE)
+  get_comptab(pdat, plot.it=FALSE, mfun="mean")
 })
 
 ## ----xsummary, results="asis"-----------------------------------------------------------

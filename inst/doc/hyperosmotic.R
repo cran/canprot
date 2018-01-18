@@ -11,7 +11,7 @@ datasets <- pdat_osmotic()
 ## ----comptab, message=FALSE-------------------------------------------------------------
 comptab <- lapply_canprot(datasets, function(dataset) {
   pdat <- get_pdat(dataset, "pdat_osmotic")
-  ZC_nH2O(pdat, plot.it=FALSE)
+  get_comptab(pdat, plot.it=FALSE, mfun="mean")
 }, varlist="pdat_osmotic")
 
 ## ----xsummary, results="asis"-----------------------------------------------------------
