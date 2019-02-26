@@ -10,7 +10,7 @@ options(width = 90)
 
 ## ----canprot, message=FALSE-------------------------------------------------------------
 library(canprot)
-data(canprot)
+library(CHNOSZ)
 
 ## ----labels-----------------------------------------------------------------------------
 nH2Olab <- expression(bar(italic(n))[H[2] * O])
@@ -20,7 +20,7 @@ QEClab <- CHNOSZ::syslab(c("glutamine", "glutamic acid", "cysteine", "H2O", "O2"
 CHNOSlab <- CHNOSZ::syslab(c("CO2", "NH3", "H2S", "H2O", "O2"))
 
 ## ----aa_formula-------------------------------------------------------------------------
-aa <- human_base
+aa <- get("human_base", canprot)
 protein.formula <- CHNOSZ::protein.formula(aa)
 ZC <- CHNOSZ::ZC(protein.formula)
 

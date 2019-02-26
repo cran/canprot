@@ -3,7 +3,6 @@ options(width = 90)
 
 ## ----canprot, message=FALSE-------------------------------------------------------------
 library(canprot)
-data(canprot)
 
 ## ----datasets---------------------------------------------------------------------------
 datasets <- pdat_osmotic()

@@ -3,7 +3,7 @@ options(width = 90)
 
 ## ----canprot, message=FALSE-------------------------------------------------------------
 library(canprot)
-data(canprot)
+library(CHNOSZ)
 
 ## ----datasets---------------------------------------------------------------------------
 datasets <- pdat_CRC()
@@ -35,6 +35,6 @@ for(i in seq_along(datasets)) {
   rankplot(pdat, res=50)
   CHNOSZ::label.figure(LETTERS[i], paren=FALSE, font=2, yfrac=0.94)
 }
-Ehplot()
-CHNOSZ::label.figure("I", paren=FALSE, font=2, yfrac=0.94)
+#Ehplot()
+#CHNOSZ::label.figure("I", paren=FALSE, font=2, yfrac=0.94)
 

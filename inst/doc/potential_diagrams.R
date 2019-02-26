@@ -9,7 +9,6 @@ options(width = 90)
 
 ## ----canprot, message=FALSE-------------------------------------------------------------
 library(canprot)
-data(canprot)
 
 ## ----groupplots, fig.width=7, fig.height=7, fig.align="center", message=FALSE, results="hide"----
 gpresult <- groupplots("pancreatic_H2O_up", res = 25)
