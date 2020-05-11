@@ -1,71 +1,99 @@
 \encoding{UTF-8}
 \name{pdat_}
 \alias{pdat_}
-\alias{pdat_CRC}
+\alias{pdat_breast}
+\alias{pdat_colorectal}
+\alias{pdat_lung}
+\alias{pdat_liver}
 \alias{pdat_pancreatic}
+\alias{pdat_prostate}
 \alias{pdat_hypoxia}
-\alias{pdat_osmotic}
-\title{Get Protein Data}
+\alias{pdat_secreted}
+\alias{pdat_3D}
+\alias{pdat_glucose}
+\alias{pdat_osmotic_bact}
+\alias{pdat_osmotic_euk}
+\alias{pdat_osmotic_halo}
+\alias{.pdat_multi}
+\alias{.pdat_osmotic}
+\title{Get Protein Expression Data}
 \description{
-  Get data on protein expression and chemical composition.
+  Get data for protein expression and chemical composition.
 }
 
 \usage{
-  pdat_CRC(dataset = NULL, basis = "QEC")
+  pdat_breast(dataset = 2020, basis = "rQEC")
+  pdat_colorectal(dataset = 2020, basis = "rQEC")
+  pdat_liver(dataset = 2020, basis = "rQEC")
+  pdat_lung(dataset = 2020, basis = "rQEC")
+  pdat_pancreatic(dataset = 2020, basis = "rQEC")
+  pdat_prostate(dataset = 2020, basis = "rQEC")
+  pdat_hypoxia(dataset = 2020, basis = "rQEC")
+  pdat_secreted(dataset = 2020, basis = "rQEC")
+  pdat_3D(dataset = 2020, basis = "rQEC")
+  pdat_glucose(dataset = 2020, basis = "rQEC")
+  pdat_osmotic_bact(dataset = 2020, basis = "rQEC")
+  pdat_osmotic_euk(dataset = 2020, basis = "rQEC")
+  pdat_osmotic_halo(dataset = 2020, basis = "rQEC")
+  .pdat_multi(dataset = 2020, basis = "rQEC")
+  .pdat_osmotic(dataset = 2017, basis = "rQEC")
 }
 
 \arguments{
-  \item{dataset}{character, specifies which dataset to retrieve}
+  \item{dataset}{character, dataset name}
   \item{basis}{character, keyword for basis species to use}
 }
 
 \details{
-The \code{pdat_} functions calculate chemical compositional metrics (using \code{\link{protcomp}}) for relatively up- and down-expressed proteins reported in proteomic experiments.
+The \code{pdat_} functions assemble lists of up- and down-regulated proteins and calculate chemical compositions using \code{\link{protcomp}}.
+After this, use \code{\link{get_comptab}} to make a table of compositional metrics that can be plotted with \code{\link{diffplot}}.
 
-Use \code{pdat_CRC} to retrieve data for protein expression in colorectal cancer, \code{pdat_pancreactic} for data on pancreatic cancer, \code{pdat_hypoxia} for data on hypoxia or 3D culture, and \code{pdat_osmotic} for data on hyperosmotic stress.
-The functions get relative expression data from the CSV files stored in \code{extdata/expression/}, with subdirectories corresponding to the names of the functions.
-Some of the functions also retrieve amino acid compositions from the files in \code{extdata/aa/} (for non-human proteins).
+If \code{dataset} is \samp{2020} (the default) or \samp{2017}, the function returns the names of all datasets in the compilation for the respective year.
 
-If \code{dataset} is \code{NULL}, the return value gives the names of all datasets that can be retrieved using the function.
-Provide one of these names as the \code{dataset} argument to retrieve the data.
-Each dataset name indicates the study (publication) where the data were reported, constructed by combining the first characters of the (first three or four) authors' family names with the 2-digit year of publication.
-This coincides with the key-generation scheme used in some bibliography manager software.
-This abbreviation also is used to name the CSV file containing the data.
-If more than one dataset is available from a single study (for example, for relative protein expression in different stages of cancer), \code{dataset} is suffixed by an underscore followed by a short abbreviation indicating the particular dataset.
+Each dataset name starts with a reference key indicating the study (publication) where the data were reported.
+The reference keys are made by combining the first characters of the authors' family names with the 2-digit year of publication.
+For mutiple datasets from one study, the reference key is followed by an underscore and descriptive text for the particular dataset.
 
-Tables listing mean compositional differences between up- and down-expressed proteins for each dataset are saved in \code{extdata/summary/}.
-These files were created using the second example below.
+Provide one of the dataset names as the \code{dataset} argument to retrieve the data.
+The functions get protein expression data from the CSV files stored in \code{extdata/expression/}, under the subdirectory corresponding to the name of the \code{pdat_} function.
+Some of the functions also read amino acid compositions (for non-human proteins) from the files in \code{extdata/aa/}.
+
+Descriptions for each function:
+
+\itemize{
+\item \code{pdat_colorectal}, \code{pdat_pancreatic}, \code{pdat_breast}, \code{pdat_lung}, \code{pdat_prostate}, and \code{pdat_liver} retrieve data for protein expression in different cancer types.
+
+\item \code{pdat_hypoxia} gets data for cellular extracts in hypoxia and \code{pdat_secreted} gets data for secreted proteins (e.g. exosomes) in hypoxia.
+
+\item \code{pdat_3D} retrieves data for 3D (e.g. tumor spheroids and aggregates) compared to 2D (monolayer) cell culture.
+
+\item \code{.pdat_osmotic} retrieves data for hyperosmotic stress, for the 2017 compilation only.
+In 2020, this compilation was expanded and split into \code{pdat_osmotic_bact} (bacteria), \code{pdat_osmotic_euk} (eukaryotic cells) and \code{pdat_osmotic_halo} (halophilic bacteria and archaea).
+
+\item \code{pdat_glucose} gets data for high-glucose experiments in eukaryotic cells.
+
+\item \code{.pdat_multi} retrieves data for studies that have multiple types of datasets (e.g. both cellular and secreted proteins in hypoxia), and is used internally by the specific functions (e.g. \code{pdat_hypoxia} and \code{pdat_secreted}).
+}
+
 }
 
 \value{
-A list consisting of \code{dataset} (the name of the dataset), \code{basis} (basis species used for the calculations), \code{description} (descriptive text), \code{pcomp} (compositional data generated by \code{\link{protcomp}}), \code{up2} (logical vector with length equal to the number of proteins; TRUE if the protein is up-expressed in group 2 compared to group 1 (i.e. cancer compared to normal), FALSE otherwise), \code{names} (gene names for the proteins, if available).
+A list consisting of:
+\describe{
+  \item{\code{dataset}}{the name of the dataset}
+  \item{\code{basis}}{basis species used for the calculations}
+  \item{\code{description}}{descriptive text for the dataset}
+  \item{\code{pcomp}}{compositional data generated by \code{\link{protcomp}}}
+  \item{\code{up2}}{logical vector with length equal to the number of proteins; TRUE for up-regulated protein and FALSE for down-regulated proteins}
 }
-
-\seealso{
-  \code{\link{get_pdat}}
 }
 
 \examples{
 library(CHNOSZ)
-pdat_CRC()
-pdat_CRC("JKMF10")  # same result as get_pdat("JKMF10")
-
-\dontrun{
-# how the extdata/summary/summary_*.csv files were made
-for(what in c("CRC", "pancreatic", "hypoxia", "osmotic")) {
-  pdat_fun <- paste0("pdat_", what)
-  datasets <- get(pdat_fun)()
-  comptab <- lapply_canprot(datasets, function(dataset) {
-    pdat <- get_pdat(dataset, pdat_fun)
-    get_comptab(pdat)
-  }, varlist = "pdat_fun")
-  # write summary table
-  comptab <- do.call(rbind, comptab)
-  comptab <- cbind(set = c(letters, LETTERS)[1:nrow(comptab)], comptab)
-  comptab[, 6:15] <- signif(comptab[, 6:15], 4)
-  filename <- paste0("summary_", what, ".csv")
-  write.csv(comptab, filename, row.names = FALSE, quote = 3)
-}}
+# list datasets in the 2017 complilation for colorectal cancer
+pdat_colorectal(2017)
+# process one dataset
+pdat_colorectal("JKMF10")
 }
 
-\concept{Protein expression}
+\concept{Protein data}

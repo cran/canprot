@@ -1,0 +1,33 @@
+---
+title: "canprot vignette"
+output:
+  html_vignette:
+    mathjax: null
+vignette: >
+  %\VignetteIndexEntry{canprot vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+library(canprot)
+```
+
+This is a generic vignette for the canprot package.
+To save package space and checking time, prebuilt vignettes are not included in the package.
+
+To compile the vignettes on demand and view them in the browser, use the `mkvig()` function.
+For example, `mkvig("3D")` compiles the vignette for three-dimensional cell culture and then opens it in the browser.
+Each of the vignettes is also available as a demo, which can be run from the browser (`help.start()` > Packages > canprot > Code demos).
+
+Here is a list of available vignettes:
+```{r vignettes, echo = FALSE}
+functions <- grep("pdat_", ls("package:canprot"), value = TRUE)
+vignettes <- gsub("pdat_", "", functions)
+vignettes
+```
+
+Note that building the vignettes requires pandoc as a system dependency.
+See the [rmarkdown pandoc vignette](https://CRAN.R-project.org/package=rmarkdown/vignettes/pandoc.html) for more information.
+
+The vignettes can be viewed online at <http://chnosz.net/canprot/doc/index.html>.

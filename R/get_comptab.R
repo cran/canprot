@@ -3,21 +3,28 @@
 # CNS: elemental abundance (C, N, S) per residue 20170124
 # ZC_nH2O: plot and summarize ZC and nH2O/residue of proteins 20160706
 
-get_comptab <- function(pdat, var1="ZC", var2="nH2O", plot.it=FALSE, mfun="median") {
+get_comptab <- function(pdat, var1="ZC", var2="nH2O", plot.it=FALSE, mfun="median", oldstyle = FALSE) {
   # define functions for the possible variables of interest
   nH2O <- function() pdat$pcomp$residue.basis[, "H2O"]
+  nO2 <- function() pdat$pcomp$residue.basis[, "O2"]
   ZC <- function() pdat$pcomp$ZC
   nC <- function() pdat$pcomp$residue.formula[, "C"]
   nN <- function() pdat$pcomp$residue.formula[, "N"]
   nS <- function() pdat$pcomp$residue.formula[, "S"]
+  NC <- function() pdat$pcomp$residue.formula[, "N"] / pdat$pcomp$residue.formula[, "C"]
+  SC <- function() pdat$pcomp$residue.formula[, "S"] / pdat$pcomp$residue.formula[, "C"]
   #V0 <- function() suppressMessages(protein.obigt(pdat$pcomp$aa)$V) / pdat$pcomp$protein.length
   # longer code, but faster ...
   V0 <- function() {
-    # the thermodynamic database entries for the amino acid residues
-    # and the backbone and terminal groups
+    # names of amino acids
     AA3 <- aminoacids(3)
-    indices <- info(c(paste0("[", AA3, "]"), "[UPBB]", "[AABB]"))
-    volumes <- get("thermo", CHNOSZ::CHNOSZ)$obigt$V[indices]
+    # memoize the volumes so we don't depend on the CHNOSZ database 20200509
+    #indices <- info(c(paste0("[", AA3, "]"), "[UPBB]", "[AABB]"))
+    #volumes <- get("thermo", CHNOSZ::CHNOSZ)$obigt$V[indices]
+    volumes <- c(26.864, 39.913, 41.116, 56.621, 88.545, 9.606, 65.753, 72.204, 
+                 75.048, 74.2, 71.832, 43.826, 49.049, 60.078, 105.825, 27.042, 
+                 44.03, 57.279, 110.045, 90.904, 26.296, 33.585)
+    # standard molal volumes of amino acid sidechains and protein backbone and terminal groups
     vAA <- volumes[1:20]
     vUPBB <- volumes[21]
     vAABB <- volumes[22]
@@ -34,6 +41,16 @@ get_comptab <- function(pdat, var1="ZC", var2="nH2O", plot.it=FALSE, mfun="media
     (VAA + VUPBB + VAABB) / pl
   }
   nAA <- function() pdat$pcomp$protein.length
+  # GRAVY and pI added 20191028
+  # canprot:: is used to access the functions in the package namespace, not the ones defined here
+  GRAVY <- function() canprot::GRAVY(pdat$pcomp$aa)
+  pI <- function() canprot::pI(pdat$pcomp$aa)
+  # PS (phylostrata) added 20191127
+  PS_TPPG17 <- function() canprot::PS(pdat$pcomp$uniprot, source = "TPPG17")
+  PS_LMM16 <- function() canprot::PS(pdat$pcomp$uniprot, source = "LMM16")
+  # MW (molecular weight) added 20200501
+  MW <- function() canprot::MWAA(pdat$pcomp$aa)
+
   # get the values of the variables using the functions
   val1 <- get(var1)()
   val2 <- get(var2)()
@@ -49,41 +66,62 @@ get_comptab <- function(pdat, var1="ZC", var2="nH2O", plot.it=FALSE, mfun="media
     title(pdat$description)
     mtext(pdat$dataset, side=4, cex=0.85, las=0, adj=0, line=-0.1)
   }
-  # calculate and print sample size, difference of means/medians, CLES, p-value
+  # calculate and print sample size
   val1_dn <- val1[!pdat$up2]
   val1_up <- val1[pdat$up2]
-  mean1_dn <- get(mfun)(val1_dn)
-  mean1_up <- get(mfun)(val1_up)
-  val1.diff <- mean1_up - mean1_dn
   val2_dn <- val2[!pdat$up2]
   val2_up <- val2[pdat$up2]
-  mean2_dn <- get(mfun)(val2_dn)
-  mean2_up <- get(mfun)(val2_up)
-  val2.diff <- mean2_up - mean2_dn
-  val1.p.value <- stats::wilcox.test(val1_dn, val1_up)$p.value
-  val1.CLES <- 100*CLES(val1_dn, val1_up)
-  val2.p.value <- stats::wilcox.test(val2_dn, val2_up)$p.value
-  val2.CLES <- 100*CLES(val2_dn, val2_up)
-  # print summary messages
   message(paste0(pdat$dataset, " (", pdat$description ,"): n1 ", length(val1_dn), ", n2 ", length(val1_up)))
-  nchar1 <- nchar(var1)
-  nchar2 <- nchar(var2)
-  start1 <- paste0(var1, substr("      MD ", nchar1, 10))
-  start2 <- paste0(var2, substr("      MD ", nchar2, 10))
-  message(paste0(start1, format(round(val1.diff, 3), nsmall=3, width=6),
-               ", CLES ", round(val1.CLES), "%",
-               ", p-value ", format(round(val1.p.value, 3), nsmall=3)))
-  message(paste0(start2, format(round(val2.diff, 3), nsmall=3, width=6),
-               ", CLES ", round(val2.CLES), "%",
-               ", p-value ", format(round(val2.p.value, 3), nsmall=3), "\n"))
+  # calculate difference of means/medians, CLES, p-value
+  # always use mean for PS 20191127
+  if(var1 %in% c("PS", "PS_TPPG17", "PS_LMM16")) {
+    mfun1_dn <- mean(val1_dn, na.rm = TRUE)
+    mfun1_up <- mean(val1_up, na.rm = TRUE)
+  } else {
+    mfun1_dn <- get(mfun)(val1_dn)
+    mfun1_up <- get(mfun)(val1_up)
+  }
+  if(var2 %in% c("PS", "PS_TPPG17", "PS_LMM16")) {
+    mfun2_dn <- mean(val2_dn, na.rm = TRUE)
+    mfun2_up <- mean(val2_up, na.rm = TRUE)
+  } else {
+    mfun2_dn <- get(mfun)(val2_dn)
+    mfun2_up <- get(mfun)(val2_up)
+  }
+  val1.diff <- mfun1_up - mfun1_dn
+  val2.diff <- mfun2_up - mfun2_dn
   out <- data.frame(dataset=pdat$dataset, description=pdat$description,
     n1=length(val1_dn), n2=length(val1_up),
-    val1.mean1=mean1_dn, val1.mean2=mean1_up, val1.diff, val1.CLES, val1.p.value,
-    val2.mean1=mean2_dn, val2.mean2=mean2_up, val2.diff, val2.CLES, val2.p.value, stringsAsFactors=FALSE)
+    val1.median1=mfun1_dn, val1.median2=mfun1_up, val1.diff,
+    val2.median1=mfun2_dn, val2.median2=mfun2_up, val2.diff, stringsAsFactors=FALSE)
+  if(oldstyle) {
+    val1.CLES <- 100*CLES(val1_dn, val1_up)
+    val2.CLES <- 100*CLES(val2_dn, val2_up)
+    val1.p.value <- val2.p.value <- NA
+    if(!any(is.na(val1_dn)) & !any(is.na(val1_up))) val1.p.value <- stats::wilcox.test(val1_dn, val1_up)$p.value
+    if(!any(is.na(val2_dn)) & !any(is.na(val2_up))) val2.p.value <- stats::wilcox.test(val2_dn, val2_up)$p.value
+    # print summary messages
+    nchar1 <- nchar(var1)
+    nchar2 <- nchar(var2)
+    start1 <- paste0(var1, substr("      MD ", nchar1, 10))
+    start2 <- paste0(var2, substr("      MD ", nchar2, 10))
+    message(paste0(start1, format(round(val1.diff, 3), nsmall=3, width=6),
+                 ", CLES ", round(val1.CLES), "%",
+                 ", p-value ", format(round(val1.p.value, 3), nsmall=3)))
+    message(paste0(start2, format(round(val2.diff, 3), nsmall=3, width=6),
+                 ", CLES ", round(val2.CLES), "%",
+                 ", p-value ", format(round(val2.p.value, 3), nsmall=3), "\n"))
+    out <- data.frame(dataset=pdat$dataset, description=pdat$description,
+      n1=length(val1_dn), n2=length(val1_up),
+      val1.median1=mfun1_dn, val1.median2=mfun1_up, val1.diff, val1.CLES, val1.p.value,
+      val2.median1=mfun2_dn, val2.median2=mfun2_up, val2.diff, val2.CLES, val2.p.value, stringsAsFactors=FALSE)
+  }
   # convert colnames to use names of variables 
   colnames(out) <- gsub("val1", var1, colnames(out))
   colnames(out) <- gsub("val2", var2, colnames(out))
-  # convert "mean" to "median" colnames
-  if(mfun == "median") colnames(out) <- gsub("mean", "median", colnames(out))
+  # convert colnames
+  if(mfun == "mean") colnames(out) <- gsub("median", "mean", colnames(out))
+  iPS <- grepl("PS", colnames(out))
+  if(any(iPS)) colnames(out)[iPS] <- gsub("median", "mean", colnames(out)[iPS])
   return(invisible(out))
 }

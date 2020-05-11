@@ -1,3 +1,161 @@
+CHANGES IN canprot 1.0.0 (2020-05-11)
+-------------------------------------
+
+- New datasets: 3D/DKM+20, glucose/BTX+17, breast/LLF+20.
+
+- Add MWAA() (molecular weight per amino acid); used in vignette plots.
+
+- Remove O2AA() and "biosynth" option from H2OAA().
+
+- Add qdist() - quantile distributions for up- and down-regulated
+  proteins in a single dataset.
+
+CHANGES IN canprot 0.2.0 (2020-04-27)
+-------------------------------------
+
+- This version was not submitted to CRAN. The package is archived on
+  Zenodo (https://doi.org/10.5281/zenodo.3768024).
+
+- To reduce package size and check time, don't include pre-built
+  vignettes. The vignettes are now in inst/vignettes.
+
+- Add mkvig() to compile and open vignettes from command line.
+
+- Add demos, one for each vignette, so vignettes can be accessed via
+  help.start().
+
+- Extract high-glucose datasets from pdat_osmotic() into pdat_glucose().
+
+- Split pdat_osmotic() into pdat_osmotic_bact (bacteria),
+  pdat_osmotic_euk (eukaryotes), and pdat_osmotic_halo (halophiles).
+  Data from the 2017 compilation are available through .pdat_osmotic().
+
+- New liver datasets: BSG15, DTS+07, RLA+10, SCL+20, GZL+20, YXZ+18.
+
+- New glucose datasets: SFKD17, SFG+12, MFD+10, HGC+18
+
+- New osmotic datasets: LPK+13, LYS+17, LWS+19, KSK+18, PNWB09, GBR+20,
+  LFY+12, SCL+20, GAM+16, DAA+05, HHB+12, SCG+15, SKV+16, KKG+14, ADW+14,
+  MHN+08, TSC18, PBP+14.
+
+- Other new datasets: prostate/ZZX+20, colorectal/FGW+12.
+
+- Renamed functions: pdat_recomp() --> recomp(),
+  pdat_multi() --> .pdat_multi().
+
+- Remove lapply_canprot().
+
+CHANGES IN canprot 0.1.6 (2020-04-10)
+-------------------------------------
+
+- This version was not submitted to CRAN. The package is archived on
+  Zenodo (https://doi.org/10.5281/zenodo.3746998).
+
+- Remove transcriptomic datasets from 2020 compilation.
+
+- New datasets for hyperosmotic stress: JBG+18, KAK+17, LTH+11, MGF+19,
+  AST+20, MPR+20, CCW+13, IXA+19, MHP+20, WFSL09, DSNM16, QHT+13.
+
+- Other new datasets: colorectal/VHW+19, prostate/SHC+20,
+  hypoxia/RVN+20, prostate/KHN+20, hypoxia/SPJ+20, 3D/EWK+19,
+  secreted/CWG+19, 3D/KDS+14, hypoxia/LLL+19, hypoxia/GPT+19, 3D/SAS+14.
+
+- Add datasets for liver cancer.
+
+CHANGES IN canprot 0.1.5 (2020-02-20)
+-------------------------------------
+
+- This version was not submitted to CRAN. The package is archived on
+  Zenodo (https://doi.org/10.5281/zenodo.3676560).
+
+- Rename check_ID() to check_IDs() and add 'IDcol' argument. The
+  function now uses a data frame for input and output.
+
+- Remove update_IDs(). check_IDs() now maps old to new UniProt IDs.
+
+- Remove remove_entries(). Its functionality has been replaced by
+  cleanup(), which should be used after check_IDs().
+
+- Naming consistency: rename pdat_CRC() to pdat_colorectal().
+
+- Because of the more standardized workflow using check_IDs() and
+  cleanup() (especially, detection of duplicates in cleanup() after ID
+  updates in check_ID()), there are minor differences in results for
+  some datasets compared to Dick (2017). The known changes are: ZYS+10
+  in pdat_colorectal(), and HXS+06, BMJ+11, CBW+11, RKP+14 in pdat_hypoxia().
+
+- Change default to basis = "rQEC" in protcomp() and get_pdat().
+
+- Remove 'dataset' argument from cleanup() (it was used only for
+  printing messages).
+
+- Add 'probs' argument to diffplot(), giving the probability levels
+  for the contour(s).
+
+- Revert to mfun = "median" for the default in get_comptab().
+
+- Add PS() function for retrieving phylostrata from Liebeskind et al.
+  (2016) or Trigos et al. (2017). PS is available for calculation with
+  get_comptab().
+
+- Add O2AA() and basis = "biosynth" option to H2OAA(), used to obtain
+  stoichiometric coefficient of O2 and H2O in amino acid biosynthetic
+  reactions.
+
+- Remove get_pdat(). It is just as easy to use e.g.
+  get("pdat_colorectal")().
+
+- Add 'oldstyle' argument to get_comptab() to compute CLES and p-values.
+
+- Update data for hypoxia and colorectal and pancreatic cancer.
+
+- Add data for breast, lung and prostate cancer.
+
+- Add data for 3D cell culture and proteins secreted in hypoxia.
+
+- Add pdat_recomp() to recompute chemical compositions of proteins for a
+  different 'basis' setting (saves time in vignettes).
+
+- Add xsummary2() for tables in new vignettes.
+
+- Update vignettes for 2020 data compilation. The old vignettes (Rmd
+  files only) are in inst/oldvignettes.
+
+- Trim human_additional.rds to contain only the proteins actually used
+  in the package. This significantly reduces the size of the package
+  as well as the time needed to build the vignettes.
+
+CHANGES IN canprot 0.1.4 (2019-11-18)
+-------------------------------------
+
+- This version was not submitted to CRAN. The package is archived on
+  Zenodo (https://doi.org/10.5281/zenodo.3544986).
+
+- Updated plot style in diffplot() shows contours from kernel density
+  estimate and eliminates drop lines for 'significant' differences. Use
+  'oldstyle = TRUE' to revert to the older style (used in vignettes to
+  reproduce plots in papers).
+
+- Add functions for calculating compositional metrics: ZCAA(), H2OAA(),
+  GRAVY(), pI(). GRAVY and pI are available for calculation with
+  get_comptab().
+
+- Make basis = "rQEC" the default for H2OAA(). This gives the relative
+  water content (residuals of a linear model of nH2O for the QEC basis
+  vs. ZC; the residuals are modified by a constant to make the mean
+  for human proteins = 0).
+
+- Add new data and function (pdat_osmotic2()) for bacteria and archaea
+  in osmotic stress as compiled by Dick et al., 2019. References have
+  been added to the vignette hyperosmotic.Rmd.
+
+- Compress csv files in extdata/expression with xz.
+
+- The code for mapping old to new UniProt IDs has been moved out of
+  protcomp() into a new function named update_IDs().
+
+- In get_comptab(), change default to mfun = "mean".
+
 CHANGES IN canprot 0.1.2 (2019-02-26)
 -------------------------------------
 

@@ -1,13 +1,34 @@
 # Exported variables
-export("protcomp", "check_ID", "get_pdat", "get_comptab", "CLES", "xsummary",
-"rankdiff", "rankplot", "Ehplot", "pdat_CRC", "remove_entries", "diffplot",
-"lapply_canprot", "get_colors", "pdat_pancreatic", "pdat_hypoxia", "pdat_osmotic",
-"groupplots", "mergedplot", "canprot")
+export("protcomp", "check_IDs", "get_comptab", "CLES", "xsummary",
+"rankdiff", "rankplot", "Ehplot", "pdat_colorectal", "diffplot",
+"get_colors", "pdat_pancreatic", "pdat_hypoxia",
+"groupplots", "mergedplot", "human", "cleanup",
+# metrics added 20191005 - 20191027
+"ZCAA", "H2OAA", "GRAVY", "pI",
+# 20191127, #20191205
+"PS", #"O2AA",
+# 20191226-20191230
+".pdat_multi", "pdat_secreted", "pdat_breast", "pdat_lung", "pdat_prostate", "pdat_3D",
+# 20200101
+"recomp", "xsummary2",
+# 20200204 used in JMDplots package
+"cplab",
+# 20200402, 20200411
+"pdat_liver", "pdat_glucose",
+# 20200414
+"mkvig",
+# 20200418
+".pdat_osmotic", "pdat_osmotic_bact", "pdat_osmotic_euk", "pdat_osmotic_halo", "xsummary3",
+# 20200501, 20200505
+"MWAA", "qdist"
+)
 
 # Imports from default packages
-importFrom("stats", "na.omit", "median", "loess", "predict", "quantile")
+importFrom("stats", "na.omit", "median", "loess", "predict", "quantile", "approx",
+"ecdf", "knots")
 
-importFrom("utils", "read.csv", "relist", "capture.output", "write.table", "data", "combn", "read.table")
+importFrom("utils", "read.csv", "relist", "capture.output", "write.table", "data",
+"combn", "read.table", "browseURL")
 
 importFrom("graphics", "mtext", "plot", "title", "box", "contour", "image",
 "lines", "text", "abline", "points", "rect",  "grconvertX", "grconvertY", "par", "plot.new")
@@ -22,3 +43,6 @@ importFrom("CHNOSZ", "basis", "protein.basis", "protein.formula",
 
 # Imports from xtable
 importFrom("xtable", "xtable", "print.xtable")
+
+# Imports from MASS
+importFrom("MASS", "kde2d")

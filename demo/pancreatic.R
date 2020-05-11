@@ -1,0 +1,2 @@
+library(canprot)
+mkvig("pancreatic")
