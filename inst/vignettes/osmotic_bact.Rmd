@@ -13,25 +13,23 @@ csl: peerj.csl
 
 ```{r setup, include=FALSE}
 library(canprot)
-library(CHNOSZ)
 library(knitr)
 ## use pngquant to reduce size of PNG images
 knit_hooks$set(pngquant = hook_pngquant)
 pngquant <- "--speed=1 --quality=0-25"
 # in case pngquant isn't available (R-Forge?)
 if (!nzchar(Sys.which("pngquant"))) pngquant <- NULL 
+# read 'basis' option
+basis <- getOption("basis")
 ```
 
 This vignette from the R package [canprot](https://github.com/jedick/canprot) version `r packageDescription("canprot")$Version` shows compositional metrics for proteins that are differentially expressed in hyperosmotic compared to control conditions.
+The analysis is described in more detail in a manuscript ([<span title="Uncovering chemical signatures of salinity gradients through compositional analysis of protein sequences">Dick et al., 2020</span>](https://doi.org/10.5194/bg-2020-146)).
 Abbreviations:
 
-  * <i>Z</i><sub>C</sub> &ndash; carbon oxidation state; <i>n</i><sub>H<sub>2</sub>O</sub> &ndash; stoichiometric hydration state per residue ([<span title="Distinct trends in chemical composition of proteins from metagenomes in redox and salinity gradients">Dick et al., 2020</span>](https://doi.org/10.1101/2020.04.01.020008); [<span title="Water as a reactant in the differential expression of proteins in cancer">Dick, 2020</a>](https://doi.org/10.1101/2020.04.09.035022)).
+  * <i>Z</i><sub>C</sub> &ndash; average oxidation state of carbon.
+  * <i>n</i><sub>H<sub>2</sub>O</sub> &ndash; stoichiometric hydration state per residue ([<span title="Uncovering chemical signatures of salinity gradients through compositional analysis of protein sequences">Dick et al., 2020</span>](https://doi.org/10.5194/bg-2020-146)) computed using the **`r basis`** basis species (`r basis.text(basis)`, H~2~O, O~2~).
   * <i>n</i><sub>AA</sub> &ndash; protein length; MW &ndash; molecular weight per residue.
-
-
-```{r options, echo=FALSE}
-options(width = 90)
-```
 
 <style type="text/css">
 body {
@@ -53,7 +51,7 @@ comptab3 <- lapply(pdat1, get_comptab, "nAA", "MW")
 ```
 
 Differences are calculated as (median value for up-regulated proteins) - (median value for down-regulated proteins).
-Dashed lines enclose the 50% credible region for highest probability density.
+Dashed lines enclose the 50% confidence region for highest probability density.
 
 ```{r diffplot, fig.width=9, fig.height=8, fig.align = "center", echo = FALSE, pngquant = pngquant}
 layout(matrix(c(0, 2, 1, 2, 1, 3, 0, 3), nrow = 2))
@@ -75,7 +73,8 @@ out <- xsummary3(comptab1, comptab2, comptab3)
 tags <- sapply(sapply(strsplit(datasets, "="), "[", -1), paste, collapse = ";")
 out <- cbind(out[, 1:2], tags = tags, out[, 3:19])
 out[, 6:20] <- round(out[, 6:20], 4)
-write.csv(out, "osmotic_bact.csv", row.names = FALSE, quote = 2)
+file <- paste0("osmotic_bact_", basis, ".csv")
+write.csv(out, file, row.names = FALSE, quote = 2)
 ```
 
 ## Data Sources
@@ -91,12 +90,13 @@ __m__. __n__. Additional file Table S2 of @KLB+15.
 __o__. __p__. Supplementary Table S6 of @SKV+16, filtered to include proteins with fold change > 2 or < 0.5 for the ratios Glucose / LB (lysogeny broth) or Osmotic-stress glucose / LB.
 __q__. Supplementary Table 1 (sheets "0.76 fold down regulated" and "1.3 fold up regulated") of @KAK+17.
 __r__. Supplemental Table S-2 of @LYS+17, filtered to include proteins with log~2~ fold change > 1 or < -1 and _p_-value < 0.05.
-__s__. Supplementary Table 1 of @KSK+18 (amino acid compositions computed from protein sequences in the list of gene annotations).
-__t__. __u__. Tables S1–S6 of @LJC+18. For each of the wild-type and ∆_sigB_ mutant, only proteins that were identified in multicellular vesicles in a single condition (0.5 M salt stress or without salt stress) were included.
-__v__. __w__. Extracted from proteinGroups.txt in PRIDE project [PXD010072](https://www.ebi.ac.uk/pride/archive/projects/PXD010072)/MaxQuantOutput.tar.gz [@TSC18], filtered to include proteins with non-zero LFQ intensity values for all replicates in each experiment; the medians of these values were used to compute fold changes; proteins with fold change > 1.5 or < 2/3 were kept.
-__x__. Table 2 of @LWS+19.
-__y__. __z__. Supplementary Tables S4 and S5 of @MGF+19, filtered to include proteins with fold change >= 2 or <= 0.5.
-__A__. Supplementary Table 1 (sheets ">2.0 Fold" and "< 0.5 Fold") of @AST+20.
-__B__. __C__. Supplementary Table 1 of @GBR+20 (column "MMO+NaCl/MMO" for CIRM129 and CIRM1025).
+__s__. Supplementary Figure 1 of @HGC+18.
+__t__. Supplementary Table 1 of @KSK+18 (amino acid compositions computed from protein sequences in the list of gene annotations).
+__u__. __v__. Tables S1–S6 of @LJC+18. For each of the wild-type and ∆_sigB_ mutant, only proteins that were identified in multicellular vesicles in a single condition (0.5 M salt stress or without salt stress) were included.
+__w__. __x__. Extracted from proteinGroups.txt in PRIDE project [PXD010072](https://www.ebi.ac.uk/pride/archive/projects/PXD010072)/MaxQuantOutput.tar.gz [@TSC18], filtered to include proteins with non-zero LFQ intensity values for all replicates in each experiment; the medians of these values were used to compute fold changes; proteins with fold change > 1.5 or < 2/3 were kept.
+__y__. Table 2 of @LWS+19.
+__z__. __A__. Supplementary Tables S4 and S5 of @MGF+19, filtered to include proteins with fold change >= 2 or <= 0.5.
+__B__. Supplementary Table 1 (sheets ">2.0 Fold" and "< 0.5 Fold") of @AST+20.
+__C__. __D__. Supplementary Table 1 of @GBR+20 (column "MMO+NaCl/MMO" for CIRM129 and CIRM1025).
 
 ## References

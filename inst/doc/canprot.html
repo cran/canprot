@@ -14,6 +14,22 @@
 
 <title>canprot vignette</title>
 
+<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
+// v0.0.1
+// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+
+document.addEventListener('DOMContentLoaded', function() {
+  const codeList = document.getElementsByClassName("sourceCode");
+  for (var i = 0; i < codeList.length; i++) {
+    var linkList = codeList[i].getElementsByTagName('a');
+    for (var j = 0; j < linkList.length; j++) {
+      if (linkList[j].innerHTML === "") {
+        linkList[j].setAttribute('aria-hidden', 'true');
+      }
+    }
+  }
+});
+</script>
 
 
 
@@ -154,7 +170,6 @@ line-height: 40px;
 }
 h2 {
 border-bottom: 4px solid #f7f7f7;
-padding-top: 10px;
 padding-bottom: 2px;
 font-size: 145%;
 }
@@ -218,10 +233,11 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <p>This is a generic vignette for the canprot package. To save package space and checking time, prebuilt vignettes are not included in the package.</p>
 <p>To compile the vignettes on demand and view them in the browser, use the <code>mkvig()</code> function. For example, <code>mkvig(&quot;3D&quot;)</code> compiles the vignette for three-dimensional cell culture and then opens it in the browser. Each of the vignettes is also available as a demo, which can be run from the browser (<code>help.start()</code> &gt; Packages &gt; canprot &gt; Code demos).</p>
 <p>Here is a list of available vignettes:</p>
-<pre><code>##  [1] &quot;3D&quot;           &quot;breast&quot;       &quot;colorectal&quot;   &quot;glucose&quot;      &quot;hypoxia&quot;     
-##  [6] &quot;liver&quot;        &quot;lung&quot;         &quot;osmotic_bact&quot; &quot;osmotic_euk&quot;  &quot;osmotic_halo&quot;
-## [11] &quot;pancreatic&quot;   &quot;prostate&quot;     &quot;secreted&quot;</code></pre>
-<p>Note that building the vignettes requires pandoc as a system dependency. See the <a href="https://CRAN.R-project.org/package=rmarkdown/vignettes/pandoc.html">rmarkdown pandoc vignette</a> for more information.</p>
+<pre><code>##  [1] &quot;3D&quot;           &quot;breast&quot;       &quot;colorectal&quot;   &quot;glucose&quot;     
+##  [5] &quot;hypoxia&quot;      &quot;liver&quot;        &quot;lung&quot;         &quot;osmotic_bact&quot;
+##  [9] &quot;osmotic_euk&quot;  &quot;osmotic_halo&quot; &quot;pancreatic&quot;   &quot;prostate&quot;    
+## [13] &quot;secreted&quot;</code></pre>
+<p>Note that building the vignettes requires <a href="https://pandoc.org">pandoc</a> as a system dependency.</p>
 <p>The vignettes can be viewed online at <a href="http://chnosz.net/canprot/doc/index.html" class="uri">http://chnosz.net/canprot/doc/index.html</a>.</p>
 
 

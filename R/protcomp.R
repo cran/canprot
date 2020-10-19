@@ -1,8 +1,8 @@
 # canprot/R/protcomp.R
-# function to read protein data and calculate compositional parameters
+# function to get amino acid compositions for list of UniProt IDs
 # 20160705 jmd
 
-protcomp <- function(uniprot = NULL, basis = "rQEC", aa = NULL, aa_file = NULL) {
+protcomp <- function(uniprot = NULL, aa = NULL, aa_file = NULL) {
   if(is.null(aa)) {
     # get amino acid compositions of human proteins
     aa <- get("human_aa", human)
@@ -29,21 +29,7 @@ protcomp <- function(uniprot = NULL, basis = "rQEC", aa = NULL, aa_file = NULL) 
       aa <- aa[iuni, ]
     }
   }
-  # protein formula, average oxidation state of carbon
-  protein.formula <- CHNOSZ::protein.formula(aa)
-  ZC <- CHNOSZ::ZC(protein.formula)
-  # basis species for proteins, protein length, basis species in residue
-  if(basis=="rQEC") basis("QEC") 
-  else basis(basis)
-  protein.basis <- protein.basis(aa)
-  protein.length <- protein.length(aa)
-  residue.basis <- protein.basis / protein.length
-  # FIXME: these values really aren't "basis" values 20191205
-  if(basis == "rQEC") residue.basis[, "H2O"] <- H2OAA(aa, basis)
-  # residue formula
-  residue.formula <- protein.formula / protein.length
   # return data
-  out <- list(uniprot = uniprot, protein.formula=protein.formula, ZC=ZC, protein.basis=protein.basis,
-    protein.length=protein.length, residue.basis=residue.basis, residue.formula=residue.formula, aa=aa)
+  out <- list(uniprot = uniprot, aa = aa)
   return(out)
 }

@@ -11,7 +11,7 @@
   diffplot(comptab, vars = c("ZC", "nH2O"), col = "black", plot.rect = FALSE,
            pt.text = c(letters, LETTERS), cex.text = 0.85, oldstyle = FALSE,
            pch = 1, cex = 2.1, contour = TRUE, col.contour = par("fg"),
-           probs = 0.5, add = FALSE, labtext = NULL)
+           probs = 0.5, add = FALSE, labtext = NULL, ...)
   cplab
 }
 
@@ -30,6 +30,7 @@
   \item{probs}{numeric, probability level(s) for contours}
   \item{add}{logical, add to an existing plot?}
   \item{labtext}{character, text to add to axis labels}
+  \item{...}{other argumenents passed to \code{\link{plot}}}
 }
 
 \details{
@@ -46,7 +47,7 @@ If \code{pt.text} is not NA or FALSE, \code{\link{text}} labels are added with s
 The default value produces labels that are taken sequentially from the 26 lowercase Roman letters in alphabetical order (\code{\link{letters}}), followed by the set of uppercase letters (\code{\link{LETTERS}}).
 
 For \code{labtext} = NULL, descriptive text (\dQuote{median difference} or \dQuote{mean difference}) is added to the axis labels in parentheses.
-This text can be changed by giving a value in \code{labtext}, or NA to suppress the text.
+This text can be changed by giving a value in \code{labtext} (for both axes), two values (for each axis), or NA to suppress the text.
 
 \code{cplab} is a list of formatted labels used by \code{diffplot}.
 It is an exported object, available to the user and other packages.
@@ -59,13 +60,14 @@ The overall style of the plot is controlled by \code{oldstyle}.
   \item{\code{oldstyle = FALSE}}{
     This is the current default style.
     Use \code{pch} and \code{cex} to control the point symbol and size.
-    Contours are added for credible regions of highest probability density, computed using a 2-D kernel density estimate (\code{\link[MASS]{kde2d}}).
-    The color of contour lines is set by \code{col.contour}.
+    Contours are added for confidence regions of highest probability density, computed using a 2-D kernel density estimate (\code{\link[MASS]{kde2d}}).
+    \code{probs} gives the probability level(s) and \code{col.contour} sets the color(s) of the contour lines.
     \code{contour} can be a logical vector, indicating which points to include; set it to FALSE to omit the contour lines.
-    \code{probs} specifies the probability levels; add more values to \code{probs} to get more contours.
+
+    The code to calculate the contour levels is modified from \code{HPDregionplot} in the \pkg{emdbook} package by Ben Bolker (\url{https://cran.r-project.org/package=emdbook}).
   }
   \item{\code{oldstyle = TRUE}}{
-    This style is used for the historical (2017) vignettes in \code{inst/oldvignettes}.
+    This style was used for the historical (2017) vignettes, which have been moved to the \samp{extdata/cpcp} directory in \pkg{JMDplots} (\url{https://github.com/jedick/JMDplots}).
     For each dataset, the point symbol is a filled square if the \emph{p}-values of both the x-variable and y-variable are less than 0.05, a filled circle if the \emph{p}-value of one of the x- or y-variables is less than 0.05, and an open circle otherwise.
     A solid line is drawn from the point to the corresponding axis if the rounded, absolute value of (\code{\link{CLES}} in percent - 50) of the x- or y-variable is greater than or equal 10.
     Otherwise, a dashed line is drawn from the point to the corresponding axis if the \emph{p}-value of the x- or y-variable is less than 0.05.

@@ -32,11 +32,10 @@ The function also returns (invisibly) the data frame used to make the table; thi
 
 \code{xsummary2} is an updated version that is used in the current vignettes in the package.
 It shows negative numbers in bold (\emph{p}-value and CLES are not shown).
-\code{xsummary3} is a further revision that shows GRAVY and pI instead of phylostrata; it is used in the \samp{osmotic_} vignettes.
+\code{xsummary3} is a further revision that shows GRAVY and pI instead of phylostrata; it is used in the \samp{osmotic_bact} and \samp{osmotic_halo} vignettes.
 }
 
 \examples{
-library(CHNOSZ)
 comptab <- lapply(c("JKMF10", "WDO+15_C.N"), function(dataset) {
   pdat <- pdat_colorectal(dataset)
   get_comptab(pdat, oldstyle = TRUE)

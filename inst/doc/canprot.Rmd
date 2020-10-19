@@ -11,6 +11,7 @@ vignette: >
 
 ```{r setup, include=FALSE}
 library(canprot)
+oldopt <- options(width = 72)
 ```
 
 This is a generic vignette for the canprot package.
@@ -27,7 +28,10 @@ vignettes <- gsub("pdat_", "", functions)
 vignettes
 ```
 
-Note that building the vignettes requires pandoc as a system dependency.
-See the [rmarkdown pandoc vignette](https://CRAN.R-project.org/package=rmarkdown/vignettes/pandoc.html) for more information.
+Note that building the vignettes requires [pandoc](https://pandoc.org) as a system dependency.
 
 The vignettes can be viewed online at <http://chnosz.net/canprot/doc/index.html>.
+
+```{r reset, include=FALSE}
+options(oldopt)
+```

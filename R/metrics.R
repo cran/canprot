@@ -29,31 +29,29 @@ ZCAA <- function(AAcomp, nothing=NULL) {
   ZCtot / nCtot
 }
 
-# calculate stoichiometric water content for amino acid compositions 20181228
-H2OAA <- function(AAcomp, basis = "rQEC") {
-  # how to use CHNOSZ to get the number of H2O in reactions
-  # to form amino acid residues from the "QEC" basis:
-  ## basis("QEC")
-  ## species(aminoacids(3))
-  ## nH2O_AA <- species()[["H2O"]]
-  # subtract one H2O to make residues
-  ## nH2O_AA <- nH2O_AA - 1
-  ## names(nH2O_AA) <- aminoacids(3)
-  ## dput(nH2O_AA)
+# calculate stoichiometric hydration state for proteins with given amino acid compositions 20181228
+H2OAA <- function(AAcomp, basis = getOption("basis")) {
   if(basis == "QEC") {
-    nH2O_AA <- c( Ala = -0.4, Cys =   -1, Asp = -1.2, Glu =   -1, Phe = -3.2, Gly = -0.6, His = -2.8,
-      Ile =  0.2, Lys =  0.2, Leu =  0.2, Met = -0.6, Asn = -1.2, Pro =   -1, Gln =   -1,
-      Arg = -0.8, Ser = -0.4, Thr = -0.2, Val =    0, Trp = -4.8, Tyr = -3.2)
+    # how to get the number of H2O in reactions to form amino acid residues from the "QEC" basis:
+    ## library(CHNOSZ)
+    ## basis("QEC")
+    ## nH2O_AA <- species(aminoacids(""))$H2O
+    ## names(nH2O_AA) <- aminoacids(3)
+    nH2O_AA <- c( Ala =  0.6, Cys =    0, Asp = -0.2, Glu =    0, Phe = -2.2, Gly =  0.4, His = -1.8,
+      Ile =  1.2, Lys =  1.2, Leu =  1.2, Met =  0.4, Asn = -0.2, Pro =    0, Gln =    0,
+      Arg =  0.2, Ser =  0.6, Thr =  0.8, Val =    1, Trp = -3.8, Tyr = -2.2) - 1
+    # note: subtract 1 to get amino acid residues in proteins
   }
-  # residual water content with QEC basis
-  if(basis == "rQEC") {
-    # round(residuals(lm(nH2O_AA ~ ZC(species()$ispecies))), 3)
-    nH2O_AA <- c(Ala = 0.724, Cys = 0.33, Asp = 0.233, Glu = 0.248, Phe = -2.213,
-      Gly = 0.833, His = -1.47, Ile = 1.015, Lys = 1.118, Leu = 1.015,
-      Met = 0.401, Asn = 0.233, Pro = 0.001, Gln = 0.248, Arg = 0.427,
-      Ser = 0.93, Thr = 0.924, Val = 0.877, Trp = -3.732, Tyr = -2.144)
-    # subtract a constant to make the mean for human proteins = 0 20191114
-    nH2O_AA <- nH2O_AA - 0.355
+  # QCa basis species 20200818
+  if(basis == "QCa") {
+    ## library(CHNOSZ)
+    ## basis(c("cysteine", "glutamine", "acetic acid", "H2O", "O2"))
+    ## nH2O_AA <- species(aminoacids(""))$H2O
+    ## names(nH2O_AA) <- aminoacids(3)
+    nH2O_AA <- c(Ala = 0.5, Cys = 0, Asp = -0.5, Glu = -0.5, Phe = -3.5, Gly = 0.5,
+      His = -1.5, Ile = 0.5, Lys = 1, Leu = 0.5, Met = 0, Asn = 0,
+      Pro = -0.5, Gln = 0, Arg = 1, Ser = 0.5, Thr = 0.5, Val = 0.5,
+      Trp = -5, Tyr = -3.5) - 1
   }
   # find columns with names for the amino acids
   isAA <- colnames(AAcomp) %in% names(nH2O_AA)
@@ -64,12 +62,39 @@ H2OAA <- function(AAcomp, basis = "rQEC") {
   nH2O <- nH2O + 1
   # divide by number of residues (length of protein)
   nH2O / rowSums(AAcomp[, isAA])
-  # to check this function:
-  #  basis("QEC")
-  #  H2O.ref <- protein.basis(1:6)[, "H2O"] / protein.length(1:6)
-  #  AAcomp <- thermo()$protein[1:6, ]
-  #  H2O.fun <- H2OAA(AAcomp, "QEC")
-  #  stopifnot(H2O.ref == H2O.fun)
+}
+
+# calculate stoichiometric oxidation state for proteins with given amino acid compositions 20201016
+O2AA <- function(AAcomp, basis = getOption("basis")) {
+  if(basis == "QEC") {
+    # how to get the number of O2 in reactions to form amino acid residues from the "QEC" basis:
+    ## library(CHNOSZ)
+    ## basis("QEC")
+    ## nO2_AA <- species(aminoacids(""))[["O2"]]
+    ## names(nO2_AA) <- aminoacids(3)
+    nO2_AA <- c(Ala = -0.3, Cys = 0, Asp = 0.6, Glu = 0, Phe = -1.9, Gly = 0.3, 
+      His = 0.4, Ile = -2.1, Lys = -1.6, Leu = -2.1, Met = -1.2, Asn = 0.6, 
+      Pro = -1, Gln = 0, Arg = -0.1, Ser = 0.2, Thr = -0.4, Val = -1.5, 
+      Trp = -1.6, Tyr = -1.4)
+  }
+  # QCa basis species 20200818
+  if(basis == "QCa") {
+    ## library(CHNOSZ)
+    ## basis(c("cysteine", "glutamine", "acetic acid", "H2O", "O2"))
+    ## nO2_AA <- species(aminoacids(""))$O2
+    ## names(nO2_AA) <- aminoacids(3)
+    nO2_AA <- c(Ala = -0.25, Cys = 0, Asp = 0.75, Glu = 0.25, Phe = -1.25, 
+      Gly = 0.25, His = 0.25, Ile = -1.75, Lys = -1.5, Leu = -1.75, 
+      Met = -1, Asn = 0.5, Pro = -0.75, Gln = 0, Arg = -0.5, Ser = 0.25, 
+      Thr = -0.25, Val = -1.25, Trp = -1, Tyr = -0.75)
+  }
+  # find columns with names for the amino acids
+  isAA <- colnames(AAcomp) %in% names(nO2_AA)
+  iAA <- match(colnames(AAcomp)[isAA], names(nO2_AA))
+  # calculate total number of O2 in reactions to form proteins
+  nO2 <- rowSums(t(t(AAcomp[, isAA]) * nO2_AA[iAA]))
+  # divide by number of residues (length of protein)
+  nO2 / rowSums(AAcomp[, isAA])
 }
 
 # calculate GRAVY for amino acid compositions 20191024
@@ -138,6 +163,12 @@ MWAA <- function(AAcomp) {
   MW <- MW + 18.01528
   # divide by number of residues (length of protein)
   MW / rowSums(AAcomp[, isAA])
+}
+
+basis.text <- function(basis) {
+  if(basis=="QEC") bt <- "glutamine, glutamic acid, cysteine"
+  if(basis=="QCa") bt <- "glutamine, cysteine, acetic acid"
+  bt
 }
 
 #########################

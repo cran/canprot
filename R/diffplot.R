@@ -5,7 +5,8 @@
 
 diffplot <- function(comptab, vars=c("ZC", "nH2O"), col="black", plot.rect=FALSE, pt.text=c(letters, LETTERS),
                      cex.text = 0.85, oldstyle = FALSE, pch = 1, cex = 2.1, contour = TRUE, col.contour = par("fg"),
-                     probs = 0.5, add = FALSE, labtext = NULL) {
+                     probs = 0.5, add = FALSE, labtext = NULL, ...) {
+
   # convert to data frame if needed
   if(!is.data.frame(comptab)) comptab <- do.call(rbind, comptab)
   # which columns we're using
@@ -15,11 +16,16 @@ diffplot <- function(comptab, vars=c("ZC", "nH2O"), col="black", plot.rect=FALSE
   # get mean/median difference, common language effect size and p-value
   X_d <- comptab[, iX[1]]
   Y_d <- comptab[, iY[1]]
+
   # figure out axis labels
   # only use part before underscore 20191207
   Dx <- paste0("D", strsplit(vars[1], "_")[[1]][1])
   Dy <- paste0("D", strsplit(vars[2], "_")[[1]][1])
   if(oldstyle) {
+    # "oldstyle" labels including overbar
+    cplabbar <- cplab
+    cplabbar$nH2O <- expression(bar(italic(n))[H[2]*O])
+    cplabbar$DnH2O <- expression(Delta*bar(italic(n))[H[2]*O])
     xvar <- cplabbar[[Dx]][[1]]
     yvar <- cplabbar[[Dy]][[1]]
     # for oldstyle plots, also get common language effect size and p-value
@@ -48,19 +54,47 @@ diffplot <- function(comptab, vars=c("ZC", "nH2O"), col="black", plot.rect=FALSE
       yparen <- paste0("(", yfun, " difference)")
     }
   } else {
-    xparen <- yparen <- paste0("(", labtext, ")")
+    labtext <- rep(labtext, length.out = 2)
+    if(is.list(labtext)) lt1 <- labtext[[1]] else lt1 <- labtext[1]
+    if(is.list(labtext)) lt2 <- labtext[[2]] else lt2 <- labtext[2]
+    xparen <- bquote("("*.(lt1)*")")
+    yparen <- bquote("("*.(lt2)*")")
   }
-  if(identical(labtext, NA)) {
-    xlab <- xvar
-    ylab <- yvar
-  } else {
-    xlab <- substitute(x ~ xparen, list(xparen=xparen, x=xvar))
-    ylab <- substitute(y ~ yparen, list(yparen=yparen, y=yvar))
-  }
+  if(identical(labtext[1], NA)) xlab <- xvar else xlab <- substitute(x ~ xparen, list(xparen=xparen, x=xvar))
+  if(identical(labtext[2], NA)) ylab <- yvar else ylab <- substitute(y ~ yparen, list(yparen=yparen, y=yvar))
+
   # initialize plot: add a 0 to make sure we can see the axis
   # prevent NA values from influencing the scale of the plot 20200103
   ina <- is.na(X_d) | is.na(Y_d)
-  if(!add) plot(type="n", c(X_d[!ina], 0), c(Y_d[!ina], 0), xlab=xlab, ylab=ylab)
+  if(!add) plot(type="n", c(X_d[!ina], 0), c(Y_d[!ina], 0), xlab=xlab, ylab=ylab, ...)
+  # add a reference rectangle
+  if(plot.rect) rect(-0.01, -0.01, 0.01, 0.01, col="grey80", lwd=0)
+  # show axis lines
+  abline(h=0, lty=3, col = "gray30")
+  abline(v=0, lty=3, col = "gray30")
+  if(oldstyle) {
+    # show drop lines: dotted/solid if p-value/effect size meet criteria
+    lty.X <- ifelse(abs(X_e - 50) >= 10, 1, ifelse(X_p < 0.05, 2, 0))
+    lty.Y <- ifelse(abs(Y_e - 50) >= 10, 1, ifelse(Y_p < 0.05, 2, 0))
+    for(i in seq_along(X_d)) {
+      lines(rep(X_d[i], 2), c(0, Y_d[i]), lty=lty.X[i])
+      lines(c(0, X_d[i]), rep(Y_d[i], 2), lty=lty.Y[i])
+    } 
+    # point symbols: open circle, filled circle, filled square (0, 1 or 2 vars with p-value < 0.05)
+    p_signif <- rowSums(data.frame(X_p < 0.05, Y_p < 0.05))
+    pch <- ifelse(p_signif==2, 15, ifelse(p_signif==1, 19, 21))
+  }
+
+  # plot points with specified color (and point style, only for oldstyle = FALSE)
+  col <- rep(col, length.out=nrow(comptab))
+  pch <- rep(pch, length.out=nrow(comptab))
+  points(X_d, Y_d, pch=pch, col=col, bg="white", cex=cex)
+  if(!identical(pt.text, NA) | !identical(pt.text, FALSE)) {
+    # add letters; for dark background, use white letters
+    col[pch %in% c(15, 19)] <- "white"
+    text(X_d, Y_d, pt.text[seq_along(X_d)], col=col, cex=cex.text)
+  }
+
   # contour 2-D kernel density estimate 20190329
   # https://stats.stackexchange.com/questions/31726/scatterplot-with-contour-heat-overlay
   if(!oldstyle & any(contour)) {
@@ -84,38 +118,13 @@ diffplot <- function(comptab, vars=c("ZC", "nH2O"), col="black", plot.rect=FALSE
         approx(c1, sz, xout = 1 - x)$y
       })
       # use lty = 2 and lwd = 1 if points are being plotted, or lty = 1 and lwd = 2 otherwise 20191126
-      if(identical(pch, NA)) lty <- 1 else lty <- 2
-      if(identical(pch, NA)) lwd <- 2 else lwd <- 1
+      if(identical(pch[1], NA)) lty <- 1 else lty <- 2
+      if(identical(pch[1], NA)) lwd <- 2 else lwd <- 1
       # don't try to plot contours for NA levels 20191207
       if(!any(is.na(levels))) contour(dens, drawlabels = FALSE, levels = levels, lty = lty, lwd = lwd, add = TRUE, col = col.contour)
     }
   }
-  # add a reference rectangle
-  if(plot.rect) rect(-0.01, -0.01, 0.01, 0.01, col="grey80", lwd=0)
-  # show axis lines
-  abline(h=0, lty=3, col = "gray30")
-  abline(v=0, lty=3, col = "gray30")
-  if(oldstyle) {
-    # show drop lines: dotted/solid if p-value/effect size meet criteria
-    lty.X <- ifelse(abs(X_e - 50) >= 10, 1, ifelse(X_p < 0.05, 2, 0))
-    lty.Y <- ifelse(abs(Y_e - 50) >= 10, 1, ifelse(Y_p < 0.05, 2, 0))
-    for(i in seq_along(X_d)) {
-      lines(rep(X_d[i], 2), c(0, Y_d[i]), lty=lty.X[i])
-      lines(c(0, X_d[i]), rep(Y_d[i], 2), lty=lty.Y[i])
-    } 
-    # point symbols: open circle, filled circle, filled square (0, 1 or 2 vars with p-value < 0.05)
-    p_signif <- rowSums(data.frame(X_p < 0.05, Y_p < 0.05))
-    pch <- ifelse(p_signif==2, 15, ifelse(p_signif==1, 19, 21))
-  }
-  # plot points with specified color (and point style, only for oldstyle = FALSE)
-  col <- rep(col, length.out=nrow(comptab))
-  pch <- rep(pch, length.out=nrow(comptab))
-  points(X_d, Y_d, pch=pch, col=col, bg="white", cex=cex)
-  if(!identical(pt.text, NA) | !identical(pt.text, FALSE)) {
-    # add letters; for dark background, use white letters
-    col[pch %in% c(15, 19)] <- "white"
-    text(X_d, Y_d, pt.text[seq_along(X_d)], col=col, cex=cex.text)
-  }
+
 }
 
 # cplab moved from internal.R and exported 20200204

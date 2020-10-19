@@ -5,7 +5,6 @@
 \description{
   \pkg{canprot} is a package for analysis of the chemical compositions of proteins from their amino acid compositions.
   The package compiles datasets for differentially expressed proteins in cancer and cell culture conditions from over 250 studies.
-  It also has tools for the thermodynamic analysis of differentially expressed proteins using the \pkg{CHNOSZ} package.
 }
 
 \section{Overview}{
@@ -16,7 +15,7 @@
   The vignettes have plots for each cancer type and cell culture condition and references for all data sources used.
   Because of their size, pre-built vignette HTML files are not included with the package; use \code{\link{mkvig}} to compile and view any of the vignettes.
 
-  The functions in this package were originally derived from code supporting the papers of Dick (2016 and 2017); the \code{oldvignettes} directory has vignettes to reproduce many of the plots in those papers.
+  The functions in this package were originally derived from code used for the papers of Dick (2016 and 2017).
   Updated data compilations and revised metrics, plots, and vignettes were developed for the papers of Dick et al. (2020) and Dick (2020).
 }
 
@@ -35,13 +34,13 @@ table(dirname(datafiles))
 }
 
 \references{
-  Dick, J. M. (2016) Proteomic indicators of oxidation and hydration state in colorectal cancer. \emph{PeerJ} \bold{4}, e2238. \doi{10.7717/peerj.2238}
+Dick, J. M. (2016) Proteomic indicators of oxidation and hydration state in colorectal cancer. \emph{PeerJ} \bold{4}, e2238. \doi{10.7717/peerj.2238}
 
-  Dick, J. M. (2017) Chemical composition and the potential for proteomic transformation in cancer, hypoxia, and hyperosmotic stress. \emph{PeerJ} \bold{5}, e3421. \doi{10.7717/peerj.3421}
+Dick, J. M. (2017) Chemical composition and the potential for proteomic transformation in cancer, hypoxia, and hyperosmotic stress. \emph{PeerJ} \bold{5}, e3421. \doi{10.7717/peerj.3421}
 
-  Dick, J. M., Yu, M. and Tan, J. (2020) Distinct trends in chemical composition of proteins from metagenomes in redox and salinity gradients. \emph{bioRxiv}. \doi{10.1101/2020.04.01.020008}
+Dick, J. M., Yu, M. and Tan, J. (2020) Uncovering chemical signatures of salinity gradients through compositional analysis of protein sequences. \emph{Biogeosciences Discussions}. \doi{10.5194/bg-2020-146}
 
-  Dick, J. M. (2020) Water as a reactant in the differential expression of proteins in cancer. \emph{bioRxiv}. \doi{10.1101/2020.04.09.035022}
+Dick, J. M. (2020) Water as a reactant in the differential expression of proteins in cancer. \emph{bioRxiv}. \doi{10.1101/2020.04.09.035022}
 }
 
 \keyword{package}

@@ -4,12 +4,15 @@
 
 files <- dir(pattern = "Rmd")
 print(system.time(
-  for(f in files) {
-    sep <- paste(rep("=", nchar(f) + 4), collapse = "")
-    message()
-    print(sep, quote = FALSE)
-    print(paste("|", f, "|"), quote = FALSE)
-    print(sep, quote = FALSE)
-    render(f)
+  for(basis in c("QEC")) {
+    options(basis = basis)
+    for(f in files) {
+      sep <- paste(rep("=", nchar(f) + 8), collapse = "")
+      message()
+      print(sep, quote = FALSE)
+      print(paste("|", f, basis, "|"), quote = FALSE)
+      print(sep, quote = FALSE)
+      rmarkdown::render(f)
+    }
   }
 ))
