@@ -3,14 +3,14 @@
 \alias{xsummary}
 \alias{xsummary2}
 \alias{xsummary3}
-\title{Summarize Compositional Differences}
+\title{Summarize Chemical Differences}
 \description{
-  Make an HTML table summarizing compositional differences.
+  Make an HTML table summarizing chemical differences.
 }
 
 \usage{
-  xsummary(comptab, vars=c("ZC", "nH2O"))
-  xsummary2(comptab1, comptab2, comptab3)
+  xsummary(comptab, vars = c("ZC", "nH2O"))
+  xsummary2(comptab1, comptab2)
   xsummary3(comptab1, comptab2, comptab3)
 }
 
@@ -23,7 +23,7 @@
 }
 
 \details{
-\code{xsummary} makes an HTML table (using \code{\link[xtable]{xtable}}) and adds bold and underline formatting to highlight significant compositional differences.
+\code{xsummary} makes an HTML table (using \code{\link[xtable]{xtable}}) and adds bold and underline formatting to highlight significant chemical differences.
 The \emph{p}-value is bolded if it is less than 0.05, and the percent common language effect size (\code{\link{CLES}}) is bolded if it is <= 40 or >= 60.
 The mean (or median) difference is [underlined / bolded] if [only one of / both] the \emph{p}-value and CLES pass these cutoffs.
 
@@ -32,7 +32,7 @@ The function also returns (invisibly) the data frame used to make the table; thi
 
 \code{xsummary2} is an updated version that is used in the current vignettes in the package.
 It shows negative numbers in bold (\emph{p}-value and CLES are not shown).
-\code{xsummary3} is a further revision that shows GRAVY and pI instead of phylostrata; it is used in the \samp{osmotic_bact} and \samp{osmotic_halo} vignettes.
+\code{xsummary3} is a further revision that shows GRAVY and pI; it is used in the \samp{osmotic_bact} and \samp{osmotic_halo} vignettes.
 }
 
 \examples{

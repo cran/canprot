@@ -5,8 +5,6 @@ export("protcomp", "check_IDs", "get_comptab", "CLES", "xsummary",
 "human", "cleanup",
 # metrics added 20191005 - 20191027
 "ZCAA", "H2OAA", "GRAVY", "pI",
-# 20191127, #20191205
-"PS", #"O2AA",
 # 20191226-20191230
 ".pdat_multi", "pdat_secreted", "pdat_breast", "pdat_lung", "pdat_prostate", "pdat_3D",
 # 20200101
@@ -29,7 +27,8 @@ export("protcomp", "check_IDs", "get_comptab", "CLES", "xsummary",
 
 ## Imports from default packages
 importFrom("graphics", "abline", "lines", "mtext", "par", "points",
-           "rect", "text", "title")
+           "rect", "text", "title", "axis", "screen",
+           "close.screen", "split.screen")
 importFrom("stats", "approx", "ecdf", "knots", "median", "na.omit",
            "pnorm", "sd")
 importFrom("utils", "browseURL", "capture.output", "read.csv",
@@ -37,3 +36,7 @@ importFrom("utils", "browseURL", "capture.output", "read.csv",
 
 ## Imports from MASS
 importFrom("MASS", "kde2d")
+
+## Imports from CHNOSZ
+## needed for MaximAct() 20210706
+importFrom("CHNOSZ", "add.protein", "affinity", "basis", "equilibrate", "thermo")

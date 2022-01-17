@@ -3,22 +3,19 @@
 
 # canprot
 
-Compositional analysis of differentially expressed proteins in cancer and cell
-culture proteomics experiments. The data include lists of up- and
-down-regulated proteins in different types of cancer (breast, colorectal,
-liver, lung, pancreatic, prostate) and laboratory conditions (hypoxia,
-hyperosmotic stress, high glucose, 3D cell culture, and proteins secreted in
-hypoxia), together with amino acid compositions computed for protein sequences
-obtained from UniProt. Functions are provided to calculate compositional metrics
-including protein length, carbon oxidation state, and stoichiometric hydration
-state. In addition, phylostrata (evolutionary ages) of protein-coding genes are
-compiled using data from [Liebeskind et al. (2016)](https://doi.org/10.1093/gbe/evw113) or
-[Trigos et al. (2017)](https://doi.org/10.1073/pnas.1617743114). The vignettes contain
-plots of compositional differences, phylostrata (for human proteins), and
-references for all datasets.
+Chemical metrics of differentially expressed proteins in cancer and cell
+culture proteomics experiments. Data files in the package have amino acid
+compositions of proteins obtained from UniProt and >250 published lists of up-
+and down-regulated proteins in different cancer types and laboratory
+experiments. Functions are provided to calculate chemical metrics including
+protein length, grand average of hydropathicity (GRAVY), isoelectric point
+(pI), carbon oxidation state, and stoichiometric hydration state; the latter
+two are described in [Dick et al.
+(2020)](https://doi.org/10.5194/bg-17-6145-2020). The vignettes visualize
+differences of chemical metrics between up- and down-regulated proteins and
+list literature references for all datasets.
 
-For more information, see two papers in *PeerJ* ([2016](https://doi.org/10.7717/peerj.2238)
-and [2017](https://doi.org/10.7717/peerj.3421)).
+Please use this citation for the package: [Dick (2021)](https://doi.org/10.1002/cso2.1007).
 
 ## Installation from CRAN
 
@@ -44,8 +41,11 @@ This also installs other R packages as dependencies (particularly **xtable**, **
 
 ### Building vignettes
 
-Building the vignettes requires [pandoc](https://pandoc.org) to be available on the system.
-With all the dependencies available, the vignettes can be compiled and viewed using the `mkvig()` function in **canprot**, like this:
+The main vignette provides a brief introduction to the package.
+There are separate analysis vignettes for each dataset; these are not built when the packagke is installed.
+
+Building the analysis vignettes requires [pandoc](https://pandoc.org) to be available on the system.
+To compile one of the analysis vignettes and open it in your browser, use the `mkvig()` function in **canprot**, like this:
 ```R
 library(canprot)
 mkvig("3D")
@@ -53,5 +53,4 @@ mkvig("3D")
 
 ## Online vignettes
 
-The vignettes can be viewed at <http://chnosz.net/canprot/doc/index.html>.
-
+All vignettes can be viewed at <http://chnosz.net/canprot/doc/index.html>.

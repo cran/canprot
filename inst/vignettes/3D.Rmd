@@ -23,15 +23,12 @@ if (!nzchar(Sys.which("pngquant"))) pngquant <- NULL
 basis <- getOption("basis")
 ```
 
-This vignette from the R package [canprot](https://github.com/jedick/canprot) version `r packageDescription("canprot")$Version` shows compositional metrics and phylostrata for proteins that are differentially expressed in 3D compared to 2D culture conditions.
-The analysis is described in more detail in a manuscript ([<span title="Water as a reactant in the differential expression of proteins in cancer">Dick, 2020</a>](https://doi.org/10.1101/2020.04.09.035022)).
+This vignette from the R package [canprot](https://github.com/jedick/canprot) version `r packageDescription("canprot")$Version` shows chemical metrics for proteins that are differentially expressed in 3D compared to 2D culture conditions.
+The analysis is described in more detail in a paper ([<span title="Water as a reactant in the differential expression of proteins in cancer">Dick, 2021</a>](https://doi.org/10.1002/cso2.1007)).
 Abbreviations:
 
   * <i>Z</i><sub>C</sub> &ndash; average oxidation state of carbon.
-  * <i>n</i><sub>H<sub>2</sub>O</sub> &ndash; stoichiometric hydration state per residue ([<span title="Uncovering chemical signatures of salinity gradients through compositional analysis of protein sequences">Dick et al., 2020</span>](https://doi.org/10.5194/bg-2020-146)) computed using the **`r basis`** basis species (`r basis.text(basis)`, H~2~O, O~2~).
-  * PS &ndash; phylostratum; <i>n</i><sub>AA</sub> &ndash; protein length; MW &ndash; molecular weight per residue.
-
-Gene ages, expressed as phylostratum numbers, are taken from [<span title="Altered interactions between unicellular and multicellular genes drive hallmarks of transformation in a diverse range of solid tumors">Trigos et al., 2017</span>](https://doi.org/10.1073/pnas.1617743114) (TPPG17) or [<span title="Towards consensus gene ages ">Liebeskind et al, 2016</span>](https://doi.org/10.1093/gbe/evw113) (LMM16).
+  * <i>n</i><sub>H<sub>2</sub>O</sub> &ndash; stoichiometric hydration state per residue ([<span title="Uncovering chemical signatures of salinity gradients through compositional analysis of protein sequences">Dick et al., 2020</span>](https://doi.org/10.5194/bg-17-6145-2020)) computed using the **`r basis`** basis species (`r basis.text(basis)`, H~2~O, O~2~).
 
 <style type="text/css">
 body {
@@ -48,33 +45,30 @@ datasets <- pdat_3D(2020)
 ```{r comptab, results="hide", message=FALSE, echo = FALSE}
 pdat1 <- lapply(datasets, pdat_3D)
 comptab1 <- lapply(pdat1, get_comptab)
-comptab2 <- lapply(pdat1, get_comptab, "PS_TPPG17", "PS_LMM16")
-comptab3 <- lapply(pdat1, get_comptab, "nAA", "MW")
+comptab2 <- lapply(pdat1, get_comptab, "nAA", "MW")
 ```
 
-Differences are calculated as (median value for up-regulated proteins) - (median value for down-regulated proteins), except for phylostrata, where mean values are used.
+Differences are calculated as (median value for up-regulated proteins) - (median value for down-regulated proteins).
 Dashed lines enclose the 50% confidence region for highest probability density.
 
-```{r diffplot, fig.width=9, fig.height=8, fig.align = "center", echo = FALSE, pngquant = pngquant}
-layout(matrix(c(0, 2, 1, 2, 1, 3, 0, 3), nrow = 2))
-par(cex = 1, mar = c(4, 4, 1, 1), mgp = c(2.5, 1, 0))
+```{r diffplot, fig.width=5, fig.height=5, fig.align = "center", echo = FALSE, pngquant = pngquant}
+par(mar = c(4, 4, 1, 1))
 diffplot(comptab1, labtext = NA)
-diffplot(comptab2, c("PS_TPPG17", "PS_LMM16"))
-diffplot(comptab3, c("nAA", "MW"), labtext = NA)
 ```
 
-In the table, values of &Delta;<i>Z</i><sub>C</sub> and &Delta;<i>n</i><sub>H<sub>2</sub>O</sub> are multiplied by 1000, values of &Delta;PS and &Delta;MW are multiplied by 100, and negative values are shown in bold.
+In the table, values of &Delta;<i>Z</i><sub>C</sub> and &Delta;<i>n</i><sub>H<sub>2</sub>O</sub> are multiplied by 1000, values of &Delta;MW are multiplied by 100, and negative values are shown in bold.
 Abbreviations:
 
   * _n_~down~ &ndash; number of down-regulated proteins; _n_~up~ &ndash; number of up-regulated proteins; P2 &ndash; passage 2; P5 &ndash; passage 5; MSC &ndash; mesenchymal stromal cells.
+  * <i>n</i><sub>AA</sub> &ndash; protein length; MW &ndash; molecular weight per residue.
 
 ```{r xsummary, results="asis", echo = FALSE}
 library(xtable)
-out <- xsummary2(comptab1, comptab2, comptab3)
+out <- xsummary2(comptab1, comptab2)
 # round values and include dataset tags
 tags <- sapply(sapply(strsplit(datasets, "="), "[", -1), paste, collapse = ";")
-out <- cbind(out[, 1:2], tags = tags, out[, 3:19])
-out[, 6:20] <- round(out[, 6:20], 4)
+out <- cbind(out[, 1:2], tags = tags, out[, 3:16])
+out[, 6:17] <- round(out[, 6:17], 4)
 file <- paste0("3D_", basis, ".csv")
 write.csv(out, file, row.names = FALSE, quote = 2)
 ```
@@ -96,7 +90,7 @@ __p__. Supplemental Table S1 of @MTK+15, filtered to exclude marked contaminants
 __q__. Tables S1a and S1b of @YLW+16.
 __r__. Tables S2 and S3 of @KJK+18.
 __s__. __t__. Supplementary Table 3 of @TGD18. 
-__u__. Extracted from proteinGroups.txt in ProteomeXchange Dataset [PXD008244](ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2019/04/PXD008244)/txt.zip [@EWK+19], including proteins quantified in at least two replicates in each condition (adherent and spheroid) and with median fold change > 2 or < 0.5.
+__u__. Extracted from proteinGroups.txt in ProteomeXchange Dataset [PXD008244](http://ftp.pride.ebi.ac.uk/pride/data/archive/2019/04/PXD008244)/txt.zip [@EWK+19], including proteins quantified in at least two replicates in each condition (adherent and spheroid) and with median fold change > 2 or < 0.5.
 __v__. Extracted from Supplementary Table 1 of @GADS19. Values were quantile normalized, then ratios were calculated between 3D and 2D cultures for each treatment (control, CBD, UVA, UVA+CBD, UVB, UVB+CBD). Ratios > 1.2 or < 1/1.2 in at least 4 treatments were used to identify differentially expressed proteins.
 __w__. Supplementary Data I, sheet "Volcano plot 2Dv3D" of @HLC19.
 __x__. __y__. __z__. Supporting Table 1 of @LPK+19, sheets "3P2P" (mono-cultured preadipocytes), "3A2A" (mono-cultured adipocytes), "3C2C" (co-cultured adipocytes with macrophages), filtered to include proteins marked as "T-test Significant" and with absolute value of "N: T-test Difference" > log~2~(0.5).
