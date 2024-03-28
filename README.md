@@ -1,56 +1,57 @@
-[![CRAN](https://www.r-pkg.org/badges/version/canprot)](https://cran.r-project.org/package=canprot)
-[![DOI](https://zenodo.org/badge/64122601.svg)](https://zenodo.org/badge/latestdoi/64122601)
+<!-- badges: start -->
+[![CRAN](https://img.shields.io/badge/dynamic/yaml?url=https%3A%2F%2Fcloud.r-project.org%2Fweb%2Fpackages%2Fcanprot%2FDESCRIPTION&query=%24.Version&logo=r&label=CRAN&color=4bc51e)](https://cran.r-project.org/package=canprot)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3544985.svg)](https://doi.org/10.5281/zenodo.3544985)
+[![R-CMD-check](https://github.com/jedick/canprot/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/jedick/canprot/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
 
 # canprot
 
-Chemical metrics of differentially expressed proteins in cancer and cell
-culture proteomics experiments. Data files in the package have amino acid
-compositions of proteins obtained from UniProt and >250 published lists of up-
-and down-regulated proteins in different cancer types and laboratory
-experiments. Functions are provided to calculate chemical metrics including
-protein length, grand average of hydropathicity (GRAVY), isoelectric point
-(pI), carbon oxidation state, and stoichiometric hydration state; the latter
-two are described in [Dick et al.
-(2020)](https://doi.org/10.5194/bg-17-6145-2020). The vignettes visualize
-differences of chemical metrics between up- and down-regulated proteins and
-list literature references for all datasets.
+Chemical analysis of proteins based on their amino acid compositions.
+Amino acid compositions can be read from FASTA files and used to calculate chemical metrics
+including carbon oxidation state and stoichiometric hydration state as described in [Dick et al. (2020)](https://doi.org/10.5194/bg-17-6145-2020).
+Other properties that can be calculated include protein length, grand average of hydropathy (GRAVY), isoelectric point (pI), molecular weight (MW),
+standard molal volume (V0), and metabolic costs
+([Akashi and Gojobori, 2002](https://doi.org/10.1073/pnas.062526999);
+[Wagner, 2005](https://doi.org/10.1093/molbev/msi126);
+[Zhang et al., 2018](https://doi.org/10.1038/s41467-018-06461-1)).
+A database of amino acid compositions of human proteins derived from UniProt is provided.
 
-Please use this citation for the package: [Dick (2021)](https://doi.org/10.1002/cso2.1007).
+See the vignettes at <https://chnosz.net/canprot/vignettes/>.
 
-## Installation from CRAN
+## Installation
 
-```R
-install.packages("canprot")
-```
-
-## Installation from GitHub
-
-First install the **remotes** package from CRAN:
+First install the **remotes** package from CRAN, then install **canprot** from GitHub.
+This also installs several other R packages as dependencies:
 
 ```R
 install.packages("remotes")
-```
-
-Then install **canprot** from GitHub:
-
-```R
 remotes::install_github("jedick/canprot")
 ```
 
-This also installs other R packages as dependencies (particularly **xtable**, **knitr** and **rmarkdown**, and their dependencies).
+### Demo
 
-### Building vignettes
+Three demos are available.
+One of them is shown below.
 
-The main vignette provides a brief introduction to the package.
-There are separate analysis vignettes for each dataset; these are not built when the packagke is installed.
-
-Building the analysis vignettes requires [pandoc](https://pandoc.org) to be available on the system.
-To compile one of the analysis vignettes and open it in your browser, use the `mkvig()` function in **canprot**, like this:
 ```R
-library(canprot)
-mkvig("3D")
+demo("thermophiles")
+#demo("locations")
+#demo("redoxins")
 ```
 
-## Online vignettes
+<a href="https://chnosz.net/canprot/vignettes/demos.html"><img src="inst/images/thermophiles.png" alt="Specific entropy and Zc and pI for Nitrososphaeria MAGs" title="Thermophiles demo for canprot" width="400px" /></a>
 
-All vignettes can be viewed at <http://chnosz.net/canprot/doc/index.html>.
+This is a scatter plot of standard specific entropy (*S*<sup>&deg;</sup> per gram) and carbon oxidation state (*Z*<sub>C</sub>) for proteins in *Nitrososphaeria* (syn. *Thaumarchaeota*) metagenome-assembled genomes (MAGs) reported by [Luo et al. (2024)](https://doi.org/10.1093/ismejo/wrad031).
+*S*<sup>&deg;</sup> is calculated using amino acid group contributions ([Dick et al, 2006](https://doi.org/10.1111/gbi.12532)) via `canprot::S0g()`.
+This plot reveals that proteins tend to have higher specific entropy in MAGs from thermal habitats compared to those from nonthermal habitats with similar carbon oxidation state.
+This implies that, after correcting for *Z*<sub>C</sub>, proteins in thermophiles have a <ins>more negative derivative</ins> of the standard Gibbs energy per gram of protein with respect to temperature.
+See the [Demos for canprot](https://chnosz.net/canprot/vignettes/demos.html) vignette for a similar plot for genomes of methanogenic archaea.
+
+<!--
+
+<img src="inst/images/locations.png" alt="Zc and pI for human proteins in subcellular locations" title="Subcellular locations demo for canprot" width="600px" />
+
+These plots show carbon oxidation state (*Z*<sub>C</sub>) and isoelectric point (pI) for human proteins in different subcellular locations.
+The localization data is from Table S6 of [Thul et al. (2017)](https://doi.org/10.1126/science.aal3321) (*A subcellular map of the human proteome*), filtered to include proteins that have both a validated location and only one annotated location.
+
+-->

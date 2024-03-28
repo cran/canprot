@@ -1,42 +1,48 @@
 # Exported variables
-export("protcomp", "check_IDs", "get_comptab", "CLES", "xsummary",
-"pdat_colorectal", "diffplot",
-"pdat_pancreatic", "pdat_hypoxia",
-"human", "cleanup",
+export(
+# 20170612 (canprot 0.1.0)
+"human_aa", "CLES",
 # metrics added 20191005 - 20191027
-"ZCAA", "H2OAA", "GRAVY", "pI",
-# 20191226-20191230
-".pdat_multi", "pdat_secreted", "pdat_breast", "pdat_lung", "pdat_prostate", "pdat_3D",
-# 20200101
-"xsummary2",
+"Zc", "nH2O", "GRAVY", "pI",
 # 20200204 used in JMDplots package
 "cplab",
-# 20200402, 20200411
-"pdat_liver", "pdat_glucose",
-# 20200414
-"mkvig",
-# 20200418
-".pdat_osmotic", "pdat_osmotic_bact", "pdat_osmotic_euk", "pdat_osmotic_halo", "xsummary3",
-# 20200501, 20200505
-"MWAA", "qdist",
-# 20200817
-"basis.text",
+# 20200501
+"MW",
+# 20200509
+"canprot",
 # 20201016
-"O2AA"
+"nO2",
+# 20240225
+"plength",
+# 20240228 moved from CHNOSZ
+"read_fasta", "count_aa", "sum_aa",
+# 20240301
+"V0", "add_cld", "pV0",
+# 20240302 moved from chem16S
+"HC", "NC", "OC", "SC", "calc_metrics",
+# 20240304
+"pMW", "Density", "Cost",
+"RespiratoryCost", "FermentativeCost",
+"B20Cost", "Y20Cost", "H11Cost",
+# 20240308
+"S0", "pS0", "S0g", "V0g",
+# 20240309
+"SV",
+# 20240310 moved from chem16S
+"add_hull",
+# 20240317
+"Zcg", "nO2g", "nH2Og",
+# 20240322
+"nC", "pnC"
 )
 
-## Imports from default packages
-importFrom("graphics", "abline", "lines", "mtext", "par", "points",
-           "rect", "text", "title", "axis", "screen",
-           "close.screen", "split.screen")
-importFrom("stats", "approx", "ecdf", "knots", "median", "na.omit",
-           "pnorm", "sd")
-importFrom("utils", "browseURL", "capture.output", "read.csv",
-           "relist", "write.table")
+# Imports from default packages
+importFrom("stats", "pnorm", "sd", "TukeyHSD", "aov")
+importFrom("utils", "read.csv", "getFromNamespace")
+importFrom("graphics", "text", "par", "polygon")
+importFrom("tools", "file_path_sans_ext")
+importFrom("grDevices", "chull", "xy.coords")
 
-## Imports from MASS
-importFrom("MASS", "kde2d")
-
-## Imports from CHNOSZ
-## needed for MaximAct() 20210706
-importFrom("CHNOSZ", "add.protein", "affinity", "basis", "equilibrate", "thermo")
+# Imports from other packages
+importFrom("stringi", "stri_count_fixed")
+importFrom("multcompView", "multcompLetters4")

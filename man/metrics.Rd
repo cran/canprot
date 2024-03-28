@@ -1,151 +1,193 @@
 \encoding{UTF-8}
 \name{metrics}
 \alias{metrics}
-\alias{H2OAA}
-\alias{O2AA}
-\alias{ZCAA}
+\alias{Zc}
+\alias{nO2}
+\alias{nH2O}
 \alias{GRAVY}
 \alias{pI}
-\alias{MWAA}
-\alias{basis.text}
-\title{Calculate Chemical Metrics for Proteins}
+\alias{MW}
+\alias{pMW}
+\alias{V0}
+\alias{pV0}
+\alias{V0g}
+\alias{Density}
+\alias{S0}
+\alias{pS0}
+\alias{S0g}
+\alias{SV}
+\alias{Zcg}
+\alias{nO2g}
+\alias{nH2Og}
+\alias{HC}
+\alias{NC}
+\alias{OC}
+\alias{SC}
+\alias{nC}
+\alias{pnC}
+\alias{plength}
+\alias{Cost}
+\alias{RespiratoryCost}
+\alias{FermentativeCost}
+\alias{B20Cost}
+\alias{Y20Cost}
+\alias{H11Cost}
+\alias{cplab}
+\title{Calculate chemical metrics for proteins}
 \description{
-These functions calculate chemical metrics of proteins given a data frame of amino acid compositions.
+Calculate chemical metrics for proteins from their amino acid compositions.
 }
 
 \usage{
-  ZCAA(AAcomp, nothing = NULL)
-  H2OAA(AAcomp, basis = getOption("basis"))
-  O2AA(AAcomp, basis = getOption("basis"))
-  GRAVY(AAcomp)
-  pI(AAcomp)
-  MWAA(AAcomp)
-  basis.text(basis)
+  Zc(AAcomp, ...)
+  nO2(AAcomp, basis = "QEC", ...)
+  nH2O(AAcomp, basis = "QEC", terminal_H2O = 0)
+  GRAVY(AAcomp, ...)
+  pI(AAcomp, terminal_H2O = 1, ...)
+  MW(AAcomp, terminal_H2O = 0, ...)
+  pMW(AAcomp, terminal_H2O = 1, ...)
+  V0(AAcomp, terminal_H2O = 0, ...)
+  pV0(AAcomp, terminal_H2O = 1, ...)
+  V0g(AAcomp, ...)
+  Density(AAcomp, ...)
+  S0(AAcomp, terminal_H2O = 0, ...)
+  pS0(AAcomp, terminal_H2O = 1, ...)
+  S0g(AAcomp, ...)
+  SV(AAcomp, ...)
+  Zcg(AAcomp, ...)
+  nH2Og(AAcomp, ...)
+  nO2g(AAcomp, ...)
+  HC(AAcomp, ...)
+  NC(AAcomp, ...)
+  OC(AAcomp, ...)
+  SC(AAcomp, ...)
+  nC(AAcomp, ...)
+  pnC(AAcomp, ...)
+  plength(AAcomp, ...)
+  Cost(AAcomp, ...)
+  RespiratoryCost(AAcomp, ...)
+  FermentativeCost(AAcomp, ...)
+  B20Cost(AAcomp, ...)
+  Y20Cost(AAcomp, ...)
+  H11Cost(AAcomp, ...)
+  cplab
 }
 
 \arguments{
   \item{AAcomp}{data frame, amino acid compositions}
-  \item{nothing}{dummy argument}
-  \item{basis}{character, basis species}
+  \item{...}{ignored additional arguments}
+  \item{basis}{character, set of basis species}
+  \item{terminal_H2O}{numeric, number of pairs of terminal groups}
 }
 
 \details{
-Columns in \code{AAcomp} should be named with the three-letter abbreviations for the amino acids (\samp{Ala}, \samp{Arg}, \ldots).
-Abbreviations are matched without regard to case (e.g. \samp{ALA} is the same as \samp{ala}).
+Columns in \code{AAcomp} should be named with the three-letter abbreviations for the amino acids.
+Case-insensitive matching matching of the abbreviations is used; e.g., \samp{Ala}, \samp{ALA}, \samp{ala} all refer to alanine.
+
+Metrics are normalized per amino acid residue except for \code{Zc}, \code{pI}, \code{Density}, \code{plength}, and other functions starting with \code{p} (for protein).
+The contribution of protein terminal groups (-H and -OH) to residue-normalized metrics is turned off by default.
+Set \code{terminal_H2O} to 1 (or to the number of polypeptide chains, if greater than one) to include their contribution.
 
 The metrics are described below:
 
 \describe{
-\item{\code{ZCAA}}{Average oxidation state of carbon (\ZC) (Dick, 2014).
-  \code{nothing} is an extra argument that does nothing.
-  It is provided so that \code{\link{do.call}} can be used to run \code{ZCAA} or \code{H2OAA} with the same number of arguments.
-
+\item{\code{Zc}}{Average oxidation state of carbon (\Zc) (Dick, 2014).
   This metric is independent of the choice of basis species.
+  Note that \Zc is normalized by number of carbon atoms, not by number of residues.
 }
-\item{\code{H2OAA}}{Stoichiometric hydration state (\nH2O) per residue.
+\item{\code{nO2}}{Stoichiometric oxidation state (\nO2 per residue).
   The available \code{basis} species are:
   \itemize{
-    \item{\samp{QEC} - glutamine, glutamic acid, cysteine, \H2O, \O2 (Dick et al., 2020) (this is the default for \code{getOption("basis")})}
+    \item{\samp{QEC} - glutamine, glutamic acid, cysteine, \H2O, \O2 (Dick et al., 2020)}
     \item{\samp{QCa} - glutamine, cysteine, acetic acid, \H2O, \O2}
-    \item{Any other valid basis specification for \code{\link[CHNOSZ]{basis}}, such as \samp{CHNOS} for \CO2, \NH3, \H2S, \H2O, and \O2}
   }
 }
-\item{\code{O2AA}}{Stoichiometric oxidation state (\nO2) per residue.
+\item{\code{nH2O}}{Stoichiometric hydration state (\nH2O per residue).
   The basis species also affect this calculation.
 }
-\item{\code{GRAVY}}{Grand average of hydropathicity.
+\item{\code{GRAVY}}{Grand average of hydropathy.
   Values of the hydropathy index for individual amino acids are from Kyte and Doolittle (1982).
 }
 \item{\code{pI}}{Isoelectric point.
   The net charge for each ionizable group was pre-calculated from pH 0 to 14 at intervals of 0.01.
   The isoelectric point is found as the pH where the sum of charges of all groups in the protein is closest to zero.
   The \pK values for the terminal groups and sidechains are taken from Bjellqvist et al. (1993) and Bjellqvist et al. (1994); note that the calculation does not implement position-specific adjustments described in the latter paper.
-  The number of N- and C-terminal groups is taken to be one, unless a value for \code{chains} (number of polypeptide chains) is given in \code{AAcomp}.
+  The number of N- and C-terminal groups is taken from \code{terminal_H2O}.
 }
-\item{\code{MWAA}}{Molecular weight per residue.}
+\item{\code{MW}}{Molecular weight.}
+\item{\code{pMW}}{Molecular weight per protein.}
+\item{\code{V0}}{Standard molal volume.
+  The values are derived from group contributions of amino acid sidechains and protein backbones (Dick et al., 2006).
+}
+\item{\code{pV0}}{Standard molal volume per protein.}
+\item{\code{V0g}}{Specific volume (reciprocal density).}
+\item{\code{Density}}{Density (MW / V0).}
+\item{\code{S0}}{Standard molal entropy.
+  The values are derived from group contributions of amino acid sidechains and protein backbones (Dick et al., 2006).
+}
+\item{\code{pS0}}{Standard molal entropy per protein.}
+\item{\code{S0g}}{Specific entropy.}
+\item{\code{SV}}{Entropy density.}
+\item{\code{Zcg}}{Carbon oxidation state per gram.}
+\item{\code{nO2g}}{Stoichiometric oxidation state per gram.}
+\item{\code{nH2Og}}{Stoichiometric hydration state per gram.}
+\item{\code{HC}}{H/C ratio (not counting terminal -H and -OH groups).}
+\item{\code{NC}}{N/C ratio.}
+\item{\code{OC}}{O/C ratio (not counting terminal -H and -OH groups).}
+\item{\code{SC}}{S/C ratio.}
+\item{\code{nC}}{Number of carbon atoms per residue.}
+\item{\code{pnC}}{Number of carbon atoms per protein.}
+\item{\code{plength}}{Protein length (number of amino acid residues).}
+\item{\code{Cost}}{Metabolic cost (Akashi and Gojobori, 2002).}
+\item{\code{RespiratoryCost}}{Respiratory cost (Wagner, 2005).}
+\item{\code{FermentativeCost}}{Fermentative cost (Wagner, 2005).}
+\item{\code{B20Cost}}{Biosynthetic cost in bacteria (Zhang et al., 2018).}
+\item{\code{Y20Cost}}{Biosynthetic cost in yeast (Zhang et al., 2018).}
+\item{\code{H11Cost}}{Biosynthetic cost in humans (Zhang et al., 2018).}
 }
 
-Note that \ZC is a per-carbon average, but \nH2O is a per-residue average.
-The contribution of \H2O from the terminal groups of proteins is counted, so shorter proteins have slightly greater \nH2O.
+\code{...} is provided to permit \code{\link{get}} or \code{\link{do.call}} constructions with the same arguments for all metrics.
+For instance, a \code{terminal_H2O} argument can be suppled to either \code{Zc} or \code{nH2O}, but it only has an effect on the latter.
 
-Tests for a few proteins (see examples) indicate that \code{GRAVY} and \code{pI} are equal those calculated with the ProtParam tool (\url{https://web.expasy.org/protparam/}; Gasteiger et al., 2005).
-
-\code{basis.text} is used in the vignettes to generate a textual description of the names of the basis species, except \H2O and \O2, for one of the keywords \samp{QEC} or \samp{QCa}.
+\code{cplab} is a list of formatted labels for each of the chemical metrics listed here.
+A check in the code ensures that the names of the functions for calculating metrics and the names for labels listed \code{cplab} are identical.
 }
 
 \references{
-Bjellqvist, B., Hughes, G. J., Pasquali, C., Paquet, N., Ravier, F., Sanchez, J.-C., Frutiger, S. and Hochstrasser, D. (1993) The focusing positions of polypeptides in immobilized pH gradients can be predicted from their amino acid sequences. \emph{Electrophoresis} \bold{14}, 1023--1031. \doi{10.1002/elps.11501401163}
 
-Bjellqvist, B. and Basse, B. and Olsen, E. and Celis, J. E. (1994) Reference points for comparisons of two-dimensional maps of proteins from different human cell types defined in a {pH} scale where isoelectric points correlate with polypeptide compositions. \emph{Electrophoresis} \bold{15}, 529--539. \doi{10.1002/elps.1150150171}
+Akashi H, Gojobori T. 2002. Metabolic efficiency and amino acid composition in the proteomes of \emph{Escherichia coli} and \emph{Bacillus subtilis}. \emph{Proceedings of the National Academy of Sciences} \bold{99}(6): 3695–3700. \doi{10.1073/pnas.062526999}
 
-Dick, J. M. (2014) Average oxidation state of carbon in proteins. \emph{J. R. Soc. Interface} \bold{11}, 20131095. \doi{10.1098/rsif.2013.1095}
+Bjellqvist B, Hughes GJ, Pasquali C, Paquet N, Ravier F, Sanchez J-C, Frutiger S, Hochstrasser D. 1993. The focusing positions of polypeptides in immobilized pH gradients can be predicted from their amino acid sequences. \emph{Electrophoresis} \bold{14}: 1023--1031. \doi{10.1002/elps.11501401163}
 
-Dick, J. M., Yu, M. and Tan, J. (2020) Uncovering chemical signatures of salinity gradients through compositional analysis of protein sequences. \emph{Biogeosciences} \bold{17}, 6145--6162. \doi{10.5194/bg-17-6145-2020}
+Bjellqvist B, Basse B, Olsen E, Celis JE. 1994. Reference points for comparisons of two-dimensional maps of proteins from different human cell types defined in a {pH} scale where isoelectric points correlate with polypeptide compositions. \emph{Electrophoresis} \bold{15}: 529--539. \doi{10.1002/elps.1150150171}
 
-Gasteiger, E., Hoogland, C., Gattiker, A., Duvaud, S., Wilkins, M. R., Appel, R. D. and Bairoch, A. (2005) Protein identification and analysis tools on the ExPASy server. In J. M. Walker (Ed.), \emph{The Proteomics Protocols Handbook} (pp. 571--607). Totowa, NJ: Humana Press Inc. \doi{10.1385/1-59259-890-0:571}
+Dick JM, LaRowe DE, Helgeson HC. 2006. Temperature, pressure, and electrochemical constraints on protein speciation: Group additivity calculation of the standard molal thermodynamic properties of ionized unfolded proteins. \emph{Biogeosciences} \bold{3}(3): 311--336. \doi{10.5194/bg-3-311-2006}
 
-Kyte, J. and Doolittle, R. F. (1982) A simple method for displaying the hydropathic character of a protein. \emph{J. Mol. Biol.} \bold{157}, 105--132. \doi{10.1016/0022-2836(82)90515-0}
+Dick JM. 2014. Average oxidation state of carbon in proteins. \emph{J. R. Soc. Interface} \bold{11}: 20131095. \doi{10.1098/rsif.2013.1095}
+
+Dick JM, Yu M, Tan J. 2020. Uncovering chemical signatures of salinity gradients through compositional analysis of protein sequences. \emph{Biogeosciences} \bold{17}: 6145--6162. \doi{10.5194/bg-17-6145-2020}
+
+Kyte J, Doolittle RF. 1982. A simple method for displaying the hydropathic character of a protein. \emph{J. Mol. Biol.} \bold{157}: 105--132. \doi{10.1016/0022-2836(82)90515-0}
+
+Wagner A. 2005. Energy constraints on the evolution of gene expression. \emph{Molecular Biology and Evolution} \bold{22}(6): 1365–1374. \doi{10.1093/molbev/msi126}
+
+Zhang H, Wang Y, Li J, Chen H, He X, Zhang H, Liang H, Lu J. 2018. Biosynthetic energy cost for amino acids decreases in cancer evolution. \emph{Nature Communications} \bold{9}(1): 4124. \doi{10.1038/s41467-018-06461-1}
+
 }
 
 \seealso{
-For calculation of \ZC from a chemical formula instead of amino acid composition, see the \code{\link[CHNOSZ]{ZC}} function in \pkg{CHNOSZ}.
+For calculation of \Zc from an elemental formula (instead of amino acid composition), see the \code{\link[CHNOSZ]{ZC}} function in \pkg{CHNOSZ}.
+\code{\link{calc_metrics}} is a wrapper to calculate one or more metrics specified in an argument.
 }
 
 \examples{
-# we need CHNOSZ for these examples
-require(CHNOSZ)
+# Amino acid composition of a tripeptide (Gly-Ala-Gly)
+aa <- data.frame(Ala = 1, Gly = 2)
+# Calculate Zc, nH2O, and length
+Zc(aa)
+nH2O(aa)
+plength(aa)
 
-# for reference, compute ZC of alanine and glycine "by hand"
-ZC.Gly <- ZC("C2H5NO2")
-ZC.Ala <- ZC("C3H7NO2")
-# define the composition of a Gly-Ala-Gly tripeptide
-AAcomp <- data.frame(Gly = 2, Ala = 1)
-# calculate the ZC of the tripeptide (value: 0.571)
-ZC.GAG <- ZCAA(AAcomp)
-# this is equal to the carbon-number-weighted average of the amino acids
-nC.Gly <- 2 * 2
-nC.Ala <- 1 * 3
-ZC.average <- (nC.Gly * ZC.Gly + nC.Ala * ZC.Ala) / (nC.Ala + nC.Gly)
-stopifnot(all.equal(ZC.GAG, ZC.average))
-
-# compute the per-residue nH2O of Gly-Ala-Gly
-basis("QEC")
-nH2O.GAG <- species("Gly-Ala-Gly")$H2O
-# divide by the length to get residue average (we keep the terminal H-OH)
-nH2O.residue <- nH2O.GAG / 3
-# compare with the value calculated by H2OAA() (-0.2)
-nH2O.H2OAA <- H2OAA(AAcomp, "QEC")
-stopifnot(all.equal(nH2O.residue, nH2O.H2OAA))
-
-# calculate GRAVY for a few proteins
-# first get the protein index in CHNOSZ's list of proteins
-iprotein <- pinfo(c("LYSC_CHICK", "RNAS1_BOVIN", "AMYA_PYRFU"))
-# then get the amino acid compositions
-AAcomp <- pinfo(iprotein)
-# then calculate GRAVY
-Gcalc <- as.numeric(GRAVY(AAcomp))
-# these are equal to values obtained with ProtParam on uniprot.org
-# https://web.expasy.org/cgi-bin/protparam/protparam1?P00698@19-147@
-# https://web.expasy.org/cgi-bin/protparam/protparam1?P61823@27-150@
-# https://web.expasy.org/cgi-bin/protparam/protparam1?P49067@2-649@
-Gref <- c(-0.472, -0.663, -0.325)
-stopifnot(all.equal(round(Gcalc, 3), Gref))
-# also calculate molecular weight of the proteins
-MWcalc <- as.numeric(MWAA(AAcomp)) * protein.length(iprotein)
-MWref <- c(14313.14, 13690.29, 76178.25)
-stopifnot(all.equal(round(MWcalc, 2), MWref))
-
-# calculate pI for a few proteins
-iprotein <- pinfo(c("LYSC_CHICK", "RNAS1_BOVIN", "AMYA_PYRFU", "CSG_HALJP"))
-AAcomp <- pinfo(iprotein)
-pI_calc <- pI(AAcomp)
-# reference values calculated with ProtParam on uniprot.org
-# LYSC_CHICK: residues 19-147 (sequence v1)
-# RNAS1_BOVIN: residues 27-150 (sequence v1)
-# AMYA_PYRFU: residues 2-649 (sequence v2)
-# CSG_HALJP: residues 35-862 (sequence v1)
-pI_ref <- c(9.32, 8.64, 5.46, 3.37)
-stopifnot(all.equal(as.numeric(pI_calc), pI_ref))
+# Make a plot with formatted labels
+plot(Zc(aa), nH2O(aa), xlab = cplab$Zc, ylab = cplab$nH2O)
 }
-
-\concept{Chemical metrics}
